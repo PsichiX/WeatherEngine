@@ -1,0 +1,2726 @@
+<!DOCTYPE HTML>
+<html lang="en" class="rust sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>WeatherEngine - Game-ready weather simulations</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="A guide to WeatherEngine that teaches enough meteorology to author and drive live weather in a game, starting from zero.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "rust";
+            const default_dark_theme = "ayu";
+            window.path_to_searchindex_js = "searchindex-1f9e71ea.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-a12e3f79.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('rust')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">WeatherEngine - Game-ready weather simulations</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
+<p>WeatherEngine grows <strong>real weather</strong> inside your game. You describe a patch
+of sky - how warm it is, how moist, which way the wind blows - drop in a
+warm bubble of air, and the engine does the rest: the bubble rises, a cloud
+forms, rain falls, and if you set the stage right, a rotating storm spins
+up. Nothing is scripted. The clouds are where the physics puts them.</p>
+<p>This book has two jobs:</p>
+<ol>
+<li><strong>Teach you the weather.</strong> WeatherEngine speaks the language of
+meteorology - the science of weather. Its functions ask for things like
+“potential temperature”, “mixing ratio”, and “CAPE”. If those words mean
+nothing to you yet, that is fine. This book starts from zero. By the end
+of Part II you will read a weather report the way the engine does.</li>
+<li><strong>Connect the weather to the code.</strong> Every concept ends by pointing at
+the exact struct, field, or function that uses it, so you always know
+<em>why</em> an input exists and <em>what number</em> to put there.</li>
+</ol>
+<h2 id="who-this-is-for"><a class="header" href="#who-this-is-for">Who this is for</a></h2>
+<p>You are building a game (Unreal or any C++ engine) and you want weather that
+behaves like weather, not a looping particle effect. You are comfortable
+with C++. You may know <strong>little or no meteorology</strong> - this book assumes
+none.</p>
+<p>If you already know your CAPE from your CIN, skim Parts I and II and jump to
+<a href="#how-the-engine-is-shaped">Part III</a>, where the simulation itself begins.</p>
+<h2 id="what-weatherengine-is-and-is-not"><a class="header" href="#what-weatherengine-is-and-is-not">What WeatherEngine is (and is not)</a></h2>
+<p>WeatherEngine is a small, focused layer over a physics core (codenamed
+“anvil”). It simulates a box of atmosphere on a grid and lets your game
+read the results each frame. Think of it as a <strong>weather actor</strong>: you send it
+commands, it runs the storm on a background thread, and it sends you back
+data to render.</p>
+<p>It is <strong>not</strong> a forecast system, a global climate model, or a full cloud of
+particles you hand-place. You do not paint every raindrop. You set up the
+<em>environment</em> and the <em>trigger</em>, and the storm is an emergent result.</p>
+<p>Here is the whole loop, in spirit:</p>
+<pre><code class="language-cpp">// 1. Describe the air (an atmospheric profile).
+Box&lt;Sounding&gt; sounding = sounding_convective();
+
+// 2. Spawn the simulation worker and build a world for it.
+Box&lt;SimClient&gt; client = new_sim_client(0);
+client-&gt;create_sim(config, axis, std::move(sounding), options);
+
+// 3. Kick off a storm: seed a warm, moist bubble.
+Box&lt;Scenario&gt; scenario = new_scenario();
+scenario-&gt;add_seed_ellipsoid(Field::Theta, center, radii, 3.0f);
+client-&gt;install_scenario(std::move(scenario));
+
+// 4. Each frame: step the weather, then read it out.
+client-&gt;advance(5, 5);
+client-&gt;grab_presets(view, presets);
+// ... drain events, upload the cloud volume to the renderer ...
+</code></pre>
+<p>Every line above is explained later. For now, notice the shape: <strong>describe,
+build, trigger, step-and-read.</strong> That is the entire mental model.</p>
+<h2 id="how-to-read-this-book"><a class="header" href="#how-to-read-this-book">How to read this book</a></h2>
+<ul>
+<li><strong>Part I</strong> builds the ideas of weather from nothing: heat, water, wind,
+and why air moves up and down. This is the ELI5 (“explain like I’m five”)
+foundation. If a term is new, it is defined the first time it appears.</li>
+<li><strong>Part II</strong> puts those ideas together into a <em>sounding</em> - a vertical
+slice through the atmosphere - and shows how the engine reads storm
+potential out of it (CAPE, shear, and friends).</li>
+<li><strong>Part III</strong> is the engine itself: how it runs on a background thread,
+how you build a world, start the weather, keep the grid focused on the
+storm, and pull data out to render.</li>
+<li><strong>Part IV</strong> is quick reference: ready-made recipes and a glossary.</li>
+</ul>
+<p>A note on units: WeatherEngine is metric throughout. Distances are in
+<strong>meters</strong>, time in <strong>seconds</strong>, temperature in <strong>kelvin</strong> (K), and wind in
+<strong>meters per second</strong> (m/s). One meter per second is about 3.6 km/h or 2.2
+mph. We will remind you as these come up.</p>
+<p>Ready? Let us start with what the air actually is.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="the-atmosphere-in-five-minutes"><a class="header" href="#the-atmosphere-in-five-minutes">The atmosphere in five minutes</a></h1>
+<p>Before we can make weather, we need a shared picture of what weather <em>is</em>.
+This page is the whole atmosphere, stripped down to the parts the engine
+cares about. Everything later builds on these five ideas.</p>
+<h2 id="air-is-a-fluid-and-it-has-weight"><a class="header" href="#air-is-a-fluid-and-it-has-weight">Air is a fluid, and it has weight</a></h2>
+<p>Air feels like nothing, but it is a real substance - a mix of gases (mostly
+nitrogen and oxygen) plus some water. Like water in a pool, air is a
+<strong>fluid</strong>: it flows, it piles up, it pushes on things. And it has weight. A
+column of air from the ground to space presses down on you with about the
+weight of a small car spread over every square meter.</p>
+<p>That downward push is <strong>pressure</strong>. Near the ground there is a lot of air
+stacked above you, so pressure is high. Climb a mountain and there is less
+air above you, so pressure drops. <strong>Pressure always falls as you go up.</strong>
+This one fact drives almost everything else.</p>
+<blockquote>
+<p><strong>ELI5:</strong> Imagine a tall stack of pillows. The bottom pillow is squished
+flat by all the ones on top. Air at the ground is the bottom pillow -
+squished by the miles of air above it. Air high up is a top pillow -
+almost nothing pressing on it, so it puffs out thin.</p>
+</blockquote>
+<p>In WeatherEngine, pressure is the <code>Pressure</code> field, measured in <strong>pascals</strong>
+(Pa). The engine actually tracks the small <em>departure</em> from the resting
+pressure (the “perturbation”), because that tiny difference is what pushes
+air around. More on that in <a href="#wind">Wind</a>.</p>
+<h2 id="warm-air-is-light-cold-air-is-heavy"><a class="header" href="#warm-air-is-light-cold-air-is-heavy">Warm air is light, cold air is heavy</a></h2>
+<p>Heat makes air expand and get thinner (less dense). Thinner air is lighter
+than the air around it, so it floats up - exactly like a hot-air balloon.
+Cold air is denser and heavier, so it sinks.</p>
+<p>This up-and-down motion driven by warmth is called <strong>convection</strong>, and it is
+the engine of nearly every interesting weather event: cumulus clouds,
+thunderstorms, the works. We give convection its own page
+(<a href="#why-air-rises-stability-and-convection">Why air rises</a>) because it is that important.</p>
+<h2 id="the-air-holds-invisible-water"><a class="header" href="#the-air-holds-invisible-water">The air holds invisible water</a></h2>
+<p>There is always water <em>vapor</em> in the air - water in gas form, invisible,
+mixed in with everything else. Warm air can hold a lot of vapor; cold air
+can hold very little. When moist air is cooled enough, the vapor it can no
+longer hold turns back into tiny liquid droplets. That is a <strong>cloud</strong>. Cool
+it more and the droplets clump into drops heavy enough to fall - that is
+<strong>rain</strong>.</p>
+<p>So the life of water in the sky is a three-step ladder the engine models
+directly:</p>
+<ul>
+<li><strong>Vapor</strong> - invisible gas (the <code>Vapor</code> field)</li>
+<li><strong>Cloud</strong> - tiny floating droplets (the <code>Cloud</code> field)</li>
+<li><strong>Rain</strong> - drops heavy enough to fall (the <code>Rain</code> field)</li>
+</ul>
+<p>We follow this ladder in detail in <a href="#water-in-the-air">Water in the air</a>.</p>
+<h2 id="the-air-is-layered-and-it-thins-with-height"><a class="header" href="#the-air-is-layered-and-it-thins-with-height">The air is layered, and it thins with height</a></h2>
+<p>The weather all happens in the bottom layer of the atmosphere, called the
+<strong>troposphere</strong> - from the ground up to about 10-12 km. That is where the
+clouds, storms, and wind you care about live. Above it the air is stable and
+calm (the stratosphere), which acts like a lid that storm tops splat against
+(you have seen the flat “anvil” top of a thunderstorm - that is the lid at
+work).</p>
+<p>Because so much changes with height, weather is really a <strong>vertical</strong> story.
+To describe the air over one spot you cannot use a single temperature; you
+need temperature <em>at every height</em>. That stack of values by height is called
+a <strong>sounding</strong>, and it is so central that it gets its own page
+(<a href="#the-sounding">The sounding</a>) and is the first thing you hand the engine.</p>
+<h2 id="wind-is-just-air-moving"><a class="header" href="#wind-is-just-air-moving">Wind is just air moving</a></h2>
+<p><strong>Wind</strong> is air flowing from where pressure is high to where it is low,
+bent and stirred by the spinning Earth and by the ups and downs of
+convection. Wind has direction and speed, and - importantly for storms - it
+usually <em>changes</em> with height: slow near the ground, faster and from a
+different direction higher up. That change with height is <strong>wind shear</strong>,
+and it is what turns a plain rain shower into an organized, rotating storm
+(<a href="#wind-shear-and-rotating-storms">Wind shear and rotating storms</a>).</p>
+<p>The engine splits wind into three numbers at every point:</p>
+<ul>
+<li><code>U</code> - wind blowing toward the east, m/s</li>
+<li><code>V</code> - wind blowing toward the north, m/s</li>
+<li><code>W</code> - wind blowing straight up, m/s</li>
+</ul>
+<h2 id="putting-it-together"><a class="header" href="#putting-it-together">Putting it together</a></h2>
+<p>That is the whole show:</p>
+<ol>
+<li>Air is a heavy fluid, and <strong>pressure falls with height</strong>.</li>
+<li><strong>Warm air rises, cold air sinks</strong> (convection).</li>
+<li>Air carries <strong>water</strong> that cycles vapor to cloud to rain.</li>
+<li>The air is <strong>layered</strong> and thins upward; weather is a vertical story.</li>
+<li><strong>Wind</strong> is moving air, and it <strong>changes with height</strong> (shear).</li>
+</ol>
+<p>Every WeatherEngine input is one of these ideas turned into a number. Next
+we make the first one precise: how the engine measures heat, and why it does
+not use the temperature you would read off a thermometer.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="heat-and-potential-temperature"><a class="header" href="#heat-and-potential-temperature">Heat and potential temperature</a></h1>
+<p>The engine’s most important field is temperature - but not the temperature
+you read off a thermometer. It uses a cousin called <strong>potential
+temperature</strong>, written with the Greek letter theta (θ) and exposed as the
+<code>Field::Theta</code> field. This page explains what it is and why it exists,
+because you cannot seed a storm without it.</p>
+<h2 id="first-the-units-kelvin"><a class="header" href="#first-the-units-kelvin">First, the units: kelvin</a></h2>
+<p>Weather science measures temperature in <strong>kelvin</strong> (K), not Celsius or
+Fahrenheit. Kelvin is just Celsius shifted so that 0 K is the coldest
+possible temperature (absolute zero). To convert:</p>
+<ul>
+<li>kelvin = celsius + 273.15</li>
+</ul>
+<p>So water freezes at 273.15 K (0 °C) and a warm 27 °C day is about 300 K.
+That number - <strong>300 K</strong> - is a good “comfortable surface air” anchor to keep
+in your head, because it is exactly the surface value the engine’s built-in
+soundings use.</p>
+<h2 id="the-problem-with-plain-temperature"><a class="header" href="#the-problem-with-plain-temperature">The problem with plain temperature</a></h2>
+<p>Here is the trouble. Take a balloon of air near the ground and carry it
+upward without adding or removing any heat. As it rises into lower pressure,
+it <strong>expands</strong>, and expanding cools it down. It gets colder purely from
+going up - even though no heat left it.</p>
+<blockquote>
+<p><strong>ELI5:</strong> Squeeze a bike pump and the air inside gets hot. Let it expand
+and it gets cold. Air does the same thing when it moves up (expands,
+cools) or down (squeezes, warms). This is why mountaintops are cold: the
+air there has expanded.</p>
+</blockquote>
+<p>This is a headache if you want to compare air at different heights. A parcel
+of air at the ground might read 300 K and the “same” air lifted to 1 km
+might read 290 K, but <em>nothing was actually done to it</em> - it only moved.
+Plain temperature mixes up “how much heat is in this air” with “how high up
+it happens to be.”</p>
+<h2 id="the-fix-potential-temperature-theta"><a class="header" href="#the-fix-potential-temperature-theta">The fix: potential temperature (theta)</a></h2>
+<p><strong>Potential temperature is the temperature a parcel of air <em>would</em> have if
+you brought it down to a standard reference pressure</strong> (sea-level-ish),
+letting it squeeze and warm on the way. It strips out the effect of height.</p>
+<p>The payoff: if you move a parcel up or down without adding heat, its plain
+temperature changes but its <strong>potential temperature stays the same.</strong> So
+theta is a clean label for “which air is this” that does not care about
+altitude.</p>
+<p>That gives us a beautifully simple rule for stability:</p>
+<ul>
+<li>If theta is <strong>the same</strong> at all heights, the air is <em>neutral</em> - a lifted
+parcel matches its surroundings and neither rises nor sinks on its own.</li>
+<li>If theta <strong>increases</strong> with height (warm-labeled air sitting on top of
+cooler-labeled air), the air is <strong>stable</strong> - lift a parcel and it is
+colder and denser than its new surroundings, so it sinks back. Calm.</li>
+<li>If theta <strong>decreases</strong> with height, the air is <strong>unstable</strong> - a lifted
+parcel is warmer and lighter than its surroundings, so it keeps going up.
+This is the recipe for storms.</li>
+</ul>
+<p>You will meet this rule again, made precise, in
+<a href="#why-air-rises-stability-and-convection">Why air rises</a>.</p>
+<h2 id="how-the-engine-uses-theta"><a class="header" href="#how-the-engine-uses-theta">How the engine uses theta</a></h2>
+<p>Two things to know for the code.</p>
+<p><strong>1. The base sounding sets theta at every height.</strong> When you build a
+sounding (next chapters), you give it a theta profile - theta versus
+altitude. The built-in <code>sounding_quiet()</code> uses theta rising from 300 K at
+the surface to 380 K at 20 km: strongly stable, so nothing happens. The
+built-in <code>sounding_convective()</code> uses a profile that is only <em>gently</em> stable
+in the middle - “conditionally unstable” - which is primed to erupt once you
+give it a push.</p>
+<p><strong>2. Seeds and feeds work in <em>perturbations</em> - offsets from that base.</strong>
+The engine does not store the full theta at each cell. It stores the small
+<strong>difference</strong> from the base sounding, called the perturbation (often
+written theta’, “theta-prime”). Zero perturbation means “exactly the
+background air.” A positive perturbation means “warmer than the background
+here.”</p>
+<p>This is why a warm bubble looks like this:</p>
+<pre><code class="language-cpp">// A +3 K warm blob: 3 kelvin warmer than the surrounding air, right here.
+scenario-&gt;add_seed_ellipsoid(Field::Theta, center, radii, /*amplitude=*/3.0f);
+</code></pre>
+<p>The <code>amplitude</code> of <code>3.0f</code> is <strong>3 K above ambient</strong>, not 3 K absolute. Three
+kelvin does not sound like much, but in conditionally unstable air it is
+enough to make the bubble float up, and once it starts rising it feeds
+itself. That single warm nudge is how most storms in the engine are born.</p>
+<p>The same perturbation idea is why the <code>TierTrigger</code> for the adaptive grid
+watches <code>theta_above</code> (a threshold on <code>|theta'|</code>, the size of the departure
+from background): a big theta perturbation marks where the interesting,
+buoyant air is.</p>
+<h2 id="takeaways"><a class="header" href="#takeaways">Takeaways</a></h2>
+<ul>
+<li>Temperatures are in <strong>kelvin</strong>; 300 K is a comfortable surface value and
+the engine’s default surface anchor.</li>
+<li>Plain temperature changes just from moving up or down, which makes it
+useless for comparing air across heights.</li>
+<li><strong>Potential temperature (theta)</strong> removes the height effect. Constant
+theta with height = neutral; increasing = stable; decreasing = unstable.</li>
+<li>The <code>Theta</code> field and its seeds are <strong>perturbations</strong> - offsets from the
+base sounding, in kelvin. A <code>+3.0f</code> seed is a 3 K warm bubble.</li>
+</ul>
+<p>Next: the other half of a storm’s fuel - water.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="water-in-the-air"><a class="header" href="#water-in-the-air">Water in the air</a></h1>
+<p>Water is the other half of a storm. Heat makes air rise; water is what turns
+that rising air into visible clouds, rain, and a huge extra kick of energy.
+The engine tracks water in three forms, and you author the first one
+directly. This page explains all three and the units they use.</p>
+<h2 id="mixing-ratio-how-the-engine-measures-moisture"><a class="header" href="#mixing-ratio-how-the-engine-measures-moisture">Mixing ratio: how the engine measures moisture</a></h2>
+<p>Moisture is measured as a <strong>mixing ratio</strong>: the mass of water divided by the
+mass of the dry air it is mixed into. The unit is <strong>kilograms of water per
+kilogram of air</strong> (kg/kg).</p>
+<p>These numbers are small. A humid near-surface value is around <code>0.014</code> kg/kg.
+Meteorologists often say this as <strong>grams per kilogram</strong> (g/kg) to avoid the
+zeros: <code>0.014</code> kg/kg is <code>14</code> g/kg. The engine’s API always uses kg/kg, so
+<code>0.014f</code> is what you type, but “14 grams of water in every kilo of air” is
+the picture to hold.</p>
+<blockquote>
+<p><strong>ELI5:</strong> Imagine every kilogram of air is a bag of invisible marbles.
+Mixing ratio counts how many of those marbles are water. Fourteen out of a
+thousand is a moist, storm-ready bag. One or two is bone dry.</p>
+</blockquote>
+<h2 id="the-three-forms-of-water"><a class="header" href="#the-three-forms-of-water">The three forms of water</a></h2>
+<p>The engine follows water through three stages, each its own field.</p>
+<h3 id="1-vapor---invisible-gas-fieldvapor"><a class="header" href="#1-vapor---invisible-gas-fieldvapor">1. Vapor - invisible gas (<code>Field::Vapor</code>)</a></h3>
+<p><strong>Water vapor</strong> is water as a gas, mixed invisibly into the air. This is the
+moisture you author and the fuel a storm drinks. You set it in the sounding
+as a vapor profile (mixing ratio versus height), and you can seed extra
+vapor into a region:</p>
+<pre><code class="language-cpp">// A moist blob: +0.003 kg/kg (3 g/kg) of vapor above the background.
+scenario-&gt;add_seed_ellipsoid(Field::Vapor, center, radii, 0.003f);
+</code></pre>
+<p>Warm air holds more vapor than cold air. There is a ceiling at any
+temperature called <strong>saturation</strong> - the most vapor that air can hold. Push
+past it and the extra has to condense.</p>
+<h3 id="2-cloud---tiny-floating-droplets-fieldcloud"><a class="header" href="#2-cloud---tiny-floating-droplets-fieldcloud">2. Cloud - tiny floating droplets (<code>Field::Cloud</code>)</a></h3>
+<p>When rising air cools to its saturation point, vapor <strong>condenses</strong> into
+<code>Cloud</code>: microscopic liquid droplets, light enough to float. This is the
+visible cloud. You do not usually author cloud directly - the engine creates
+it wherever the physics says air got cold and moist enough. You <em>read</em> it
+back out to render (the <code>ChannelPreset::Cloud</code> grab preset).</p>
+<p>The height where a rising surface parcel first hits saturation and cloud
+begins is the <strong>lifting condensation level</strong> (LCL) - literally cloud base.
+It shows up in the sounding report (<a href="#storm-fuel-cape-cin-and-the-key-levels">CAPE and the key levels</a>).</p>
+<h3 id="3-rain---drops-heavy-enough-to-fall-fieldrain"><a class="header" href="#3-rain---drops-heavy-enough-to-fall-fieldrain">3. Rain - drops heavy enough to fall (<code>Field::Rain</code>)</a></h3>
+<p>When cloud droplets collide and merge into drops too heavy to float, they
+become <code>Rain</code> and fall. Falling rain drags air down with it, which is how
+storms produce cool downdrafts and gusty outflow at the ground. The engine
+accumulates what reaches the surface into a <strong>precipitation map</strong> you can
+query in millimeters (<a href="#getting-data-back-out">Getting data back out</a>).</p>
+<h2 id="the-hidden-energy-why-moisture-makes-storms-violent"><a class="header" href="#the-hidden-energy-why-moisture-makes-storms-violent">The hidden energy: why moisture makes storms violent</a></h2>
+<p>Here is the part that makes water special, not just decorative.</p>
+<p>Turning vapor into liquid <strong>releases heat</strong> - the same heat it took to
+evaporate that water in the first place, now handed back. This is called
+<strong>latent heat</strong> (“latent” = hidden, stored).</p>
+<blockquote>
+<p><strong>ELI5:</strong> Sweat cools you because evaporating water <em>takes</em> heat from your
+skin. Run that backwards: when vapor turns into cloud droplets, it <em>gives</em>
+that heat back to the air around it.</p>
+</blockquote>
+<p>So when a moist parcel rises and its vapor starts condensing into cloud, the
+condensation warms the parcel from the inside. Warmer means lighter, lighter
+means it rises faster, faster rising means more condensation - a
+self-feeding engine. This is why a humid day produces towering
+thunderstorms and a dry day produces, at most, wispy clouds. <strong>The moisture
+you put in the sounding is the storm’s fuel tank.</strong></p>
+<p>This latent-heat feedback is exactly why a tiny <code>+3 K</code> warm seed can grow
+into a full storm: the seed only has to lift the moist air high enough to
+start condensation, and the released latent heat takes over from there.</p>
+<h2 id="what-you-control-vs-what-emerges"><a class="header" href="#what-you-control-vs-what-emerges">What you control vs. what emerges</a></h2>
+<p>A useful split to keep straight:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Field</th><th>You author it?</th><th>Where it comes from</th></tr>
+</thead>
+<tbody>
+<tr><td><code>Vapor</code></td><td><strong>Yes</strong> - sounding profile + optional seeds</td><td>Your input; the fuel</td></tr>
+<tr><td><code>Cloud</code></td><td>No</td><td>Emerges when rising air saturates</td></tr>
+<tr><td><code>Rain</code></td><td>No</td><td>Emerges when cloud droplets merge and fall</td></tr>
+</tbody>
+</table>
+</div>
+<p>You pour in vapor (and heat); the engine makes the cloud and rain. If your
+storms are too weak, the usual fix is a <strong>moister sounding</strong> or a moister
+seed - a bigger fuel tank - not more force.</p>
+<h2 id="takeaways-1"><a class="header" href="#takeaways-1">Takeaways</a></h2>
+<ul>
+<li>Moisture is a <strong>mixing ratio</strong> in kg/kg; <code>0.014</code> kg/kg (14 g/kg) is moist,
+storm-ready near-surface air.</li>
+<li>Water lives in three fields: <strong><code>Vapor</code></strong> (gas, you author it), <strong><code>Cloud</code></strong>
+(floating droplets, emerges), <strong><code>Rain</code></strong> (falling drops, emerges).</li>
+<li>Condensation releases <strong>latent heat</strong>, which warms rising air and makes
+moist storms self-feeding and strong.</li>
+<li>You supply vapor and a trigger; cloud, rain, and their energy come out of
+the physics.</li>
+</ul>
+<p>Next: the third ingredient - wind.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="wind"><a class="header" href="#wind">Wind</a></h1>
+<p>Wind is moving air. It ventilates storms, carries them across the map, and -
+when it changes with height - gives them the twist that turns an ordinary
+shower into an organized, long-lived, rotating storm. This page covers how
+the engine describes wind and the world it lives in.</p>
+<h2 id="three-numbers-at-every-point"><a class="header" href="#three-numbers-at-every-point">Three numbers at every point</a></h2>
+<p>The engine splits wind into three components, each a field measured in
+<strong>meters per second</strong> (m/s):</p>
+<ul>
+<li><strong><code>U</code></strong> - wind blowing toward the <strong>east</strong> (positive = eastward)</li>
+<li><strong><code>V</code></strong> - wind blowing toward the <strong>north</strong> (positive = northward)</li>
+<li><strong><code>W</code></strong> - wind blowing straight <strong>up</strong> (positive = upward)</li>
+</ul>
+<p><code>U</code> and <code>V</code> together are the <strong>horizontal</strong> wind - the breeze you would feel
+and the direction a storm drifts. <code>W</code> is the <strong>vertical</strong> wind, which is
+almost always tiny in the background air but becomes large and violent inside
+a storm’s updraft (rising) and downdraft (sinking). A strong thunderstorm
+updraft can have <code>W</code> of tens of meters per second.</p>
+<p>A quick feel for the units:</p>
+<ul>
+<li>1 m/s ≈ 3.6 km/h ≈ 2.2 mph (a slow walk)</li>
+<li>10 m/s ≈ 36 km/h (a stiff breeze, or a typical mid-level wind)</li>
+<li>30 m/s ≈ 108 km/h (a violent updraft core, or a gale)</li>
+</ul>
+<h2 id="the-worlds-axes"><a class="header" href="#the-worlds-axes">The world’s axes</a></h2>
+<p>The engine’s world is a box. Horizontal position is a pair of meters,
+<code>Vec2{x, y}</code>, where <strong>x is east and y is north</strong>, matching <code>U</code> and <code>V</code>.
+Height is a third axis, <strong>z, pointing up</strong>, matching <code>W</code>. A full 3D point is
+<code>Vec3{x, y, z}</code> in meters.</p>
+<p>So when you place a seed at <code>Vec3{0.0, 0.0, 1000.0}</code>, you mean “centered
+horizontally at the origin, 1000 meters above the ground.” When you read a
+storm-motion vector of <code>Vec2{9.0, 5.0}</code> m/s, you mean “moving 9 m/s east and
+5 m/s north.”</p>
+<h2 id="background-wind-authored-in-the-sounding"><a class="header" href="#background-wind-authored-in-the-sounding">Background wind: authored in the sounding</a></h2>
+<p>The starting wind of your world - the calm, large-scale flow before any
+storm - is part of the sounding, given as a wind profile: an east/north wind
+at each height.</p>
+<pre><code class="language-cpp">// Wind that turns and strengthens with height (altitude m, east m/s, north m/s).
+WindPoint wind[] = {
+    {   0.0f, -8.0f, -6.0f},   // near the ground: from the southeast, gentle
+    {2000.0f, -2.0f, -1.0f},
+    {6000.0f,  8.0f,  1.0f},   // mid levels: from the west, stronger
+    {12000.0f, 12.0f, 2.0f},   // near the storm top: strong westerly
+};
+sounding-&gt;set_wind(Slice&lt;const WindPoint&gt;{wind, 4});
+</code></pre>
+<p>Notice how the wind both <strong>speeds up</strong> and <strong>changes direction</strong> as you go
+up. That is not decoration - it is the single most important control over
+what <em>kind</em> of storm you get. The next section says why.</p>
+<h2 id="wind-shear-the-change-of-wind-with-height"><a class="header" href="#wind-shear-the-change-of-wind-with-height">Wind shear: the change of wind with height</a></h2>
+<p><strong>Wind shear</strong> is how much the wind changes as you climb. If the wind is 5
+m/s from the south at the ground and 25 m/s from the west at 6 km, there is
+strong shear between those levels - a big change in both speed and direction.</p>
+<p>Shear matters because of what it does to a storm’s structure:</p>
+<ul>
+<li><strong>Low shear</strong> (wind about the same at all heights): a storm’s rising warm
+air and its falling cooled rain end up in the same place. The rain falls
+back into the updraft and chokes it. You get brief, disorganized “popcorn”
+showers that rain themselves out in 20 minutes.</li>
+<li><strong>High shear</strong> (wind changes a lot with height): the upper winds blow the
+rain and downdraft <em>away</em> from the updraft, so the two do not fight. The
+storm can stand up straight, breathe, and live for hours. High shear also
+tilts and stretches the flow into a rotating column - the seed of a
+<strong>supercell</strong>, the storm type that makes large hail and tornadoes.</li>
+</ul>
+<p>The engine measures shear for you as the <strong>0-6 km bulk shear</strong> vector: the
+difference between the wind near 6 km and the wind near the ground. It comes
+back in the sounding report as <code>shear_0_6km</code>. As a rough guide, a bulk shear
+magnitude above about <strong>20 m/s</strong> favors organized, supercell-type storms.</p>
+<p>There is a subtler, twist-related cousin of shear called <strong>helicity</strong> that
+governs whether a storm actually rotates. It needs its own discussion, so it
+waits for <a href="#wind-shear-and-rotating-storms">Wind shear and rotating storms</a>.</p>
+<h2 id="why-wind-can-carry-a-storm-off-your-grid"><a class="header" href="#why-wind-can-carry-a-storm-off-your-grid">Why wind can carry a storm off your grid</a></h2>
+<p>A storm drifts with the wind. If your background wind is 12 m/s and you
+simulate for ten minutes, the storm travels about 7 km. If your fine grid or
+your domain is only a few km wide, the storm walks right off it.</p>
+<p>The engine gives you two tools for this, both introduced later:</p>
+<ul>
+<li><strong>Park the storm.</strong> A supercell tends to move at a predictable speed and
+direction (the <strong>Bunkers storm motion</strong>, from the sounding report).
+Subtract that motion from your whole wind profile and the storm stands
+still in the box while the world flows past it. See
+<a href="#wind-shear-and-rotating-storms">rotating storms</a> and the recipe for
+<a href="#recipes">a parked supercell</a>.</li>
+<li><strong>Let the fine grid chase it.</strong> The adaptive grid (the <em>regridder</em>) keeps
+high resolution wherever the storm is and lets it go coarse elsewhere, so
+the fine cells follow the storm across the domain. See
+<a href="#following-the-storm-the-adaptive-grid">Following the storm</a>.</li>
+</ul>
+<h2 id="takeaways-2"><a class="header" href="#takeaways-2">Takeaways</a></h2>
+<ul>
+<li>Wind is three fields in m/s: <strong><code>U</code></strong> (east), <strong><code>V</code></strong> (north), <strong><code>W</code></strong>
+(up). Horizontal <code>U</code>/<code>V</code> drift the storm; vertical <code>W</code> is the updraft.</li>
+<li>The world uses <strong>x=east, y=north, z=up</strong>, all in meters.</li>
+<li>Background wind is authored in the sounding as an east/north profile by
+height.</li>
+<li><strong>Wind shear</strong> - the change of wind with height - decides whether you get
+a brief shower (low shear) or an organized, rotating supercell (high
+shear). The engine reports <strong>0-6 km bulk shear</strong> for you.</li>
+<li>Wind carries storms; you can <strong>park</strong> the storm or let the <strong>fine grid
+chase</strong> it.</li>
+</ul>
+<p>Next, the idea we keep leaning on: why air rises in the first place.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="why-air-rises-stability-and-convection"><a class="header" href="#why-air-rises-stability-and-convection">Why air rises: stability and convection</a></h1>
+<p>This is the heart of the whole thing. Every cloud and storm the engine makes
+begins with a lump of air deciding to go up. Whether it goes up, how far,
+and how violently, is set by two ideas: <strong>buoyancy</strong> and <strong>stability</strong>. Get
+these and the rest of the book is bookkeeping.</p>
+<h2 id="buoyancy-the-hot-air-balloon-rule"><a class="header" href="#buoyancy-the-hot-air-balloon-rule">Buoyancy: the hot-air-balloon rule</a></h2>
+<p>A parcel of air floats or sinks by comparing its density to the air right
+around it - exactly like a cork in water.</p>
+<ul>
+<li>Warmer than its surroundings -&gt; lighter -&gt; it <strong>rises</strong> (positive
+buoyancy).</li>
+<li>Colder than its surroundings -&gt; heavier -&gt; it <strong>sinks</strong> (negative
+buoyancy).</li>
+<li>Same as its surroundings -&gt; it just sits there (neutral).</li>
+</ul>
+<blockquote>
+<p><strong>ELI5:</strong> A hot-air balloon rises because the air in the balloon is warmer
+and lighter than the air outside. Cool that air and the balloon drops.
+Every cloud is a hot-air balloon made of air that got warmer than its
+neighbors.</p>
+</blockquote>
+<p>Two things make a parcel lighter than its neighbors: it is <strong>warmer</strong>
+(higher theta), or it is <strong>moister</strong> (water vapor is actually lighter than
+dry air, and - much bigger - condensing vapor releases latent heat that
+warms the parcel, from <a href="#water-in-the-air">Water in the air</a>). Warm plus moist
+is the buoyant, storm-making combination, which is why the engine’s classic
+trigger seeds <em>both</em> theta and vapor.</p>
+<h2 id="stability-does-the-atmosphere-fight-lifting-or-help-it"><a class="header" href="#stability-does-the-atmosphere-fight-lifting-or-help-it">Stability: does the atmosphere fight lifting or help it?</a></h2>
+<p>Buoyancy is about one parcel. <strong>Stability</strong> is about the whole column: if you
+nudge a parcel up a little, does it come back, or does it run away?</p>
+<p>Recall the theta rule from <a href="#heat-and-potential-temperature">Heat and potential
+temperature</a>:</p>
+<ul>
+<li><strong>Stable</strong> - theta increases with height. Lift a parcel and it is now
+colder than its new surroundings, so it sinks back. The atmosphere resists
+motion. Calm skies. (The engine’s <code>sounding_quiet()</code> is strongly stable -
+weather refuses to happen in it.)</li>
+<li><strong>Neutral</strong> - theta constant with height. A lifted parcel matches its
+surroundings and neither rises nor sinks.</li>
+<li><strong>Unstable</strong> - theta decreases with height. A lifted parcel is warmer than
+its surroundings and keeps accelerating up. Runaway. Storms.</li>
+</ul>
+<p>Pure instability is rare in the real world, because the sun heats the ground
+and the resulting convection quickly mixes it away. The interesting case -
+the case that makes thunderstorms - is in between.</p>
+<h2 id="conditional-instability-the-loaded-gun"><a class="header" href="#conditional-instability-the-loaded-gun">Conditional instability: the loaded gun</a></h2>
+<p>Most storm days are <strong>conditionally unstable</strong>. That means:</p>
+<ul>
+<li>For a <em>dry</em> parcel, the column is stable - nudge it up and it sinks back.</li>
+<li>But for a <em>moist</em> parcel that rises far enough to start condensing, the
+latent-heat kick makes it buoyant, and <em>then</em> it runs away.</li>
+</ul>
+<p>The “condition” is: <strong>get the moist air high enough to start condensing, and
+it takes off on its own.</strong> Below that height the atmosphere holds it down;
+above it, the atmosphere lets it go.</p>
+<blockquote>
+<p><strong>ELI5:</strong> A ball sitting in a small dip at the top of a hill. Give it a
+tiny push and it rolls back into the dip - stable. But push it just over
+the lip of the dip and it rolls all the way down the hill - unstable. The
+lip is the barrier; the moist air only needs one good shove past it.</p>
+</blockquote>
+<p>This is exactly the environment <code>sounding_convective()</code> sets up, and it is
+why you fire a storm with a small warm, moist seed. The seed is the “shove.”
+It does not need to be strong; it only needs to lift the moist boundary-layer
+air past its barrier.</p>
+<h2 id="the-three-barriers-and-levels"><a class="header" href="#the-three-barriers-and-levels">The three barriers and levels</a></h2>
+<p>When you lift a surface parcel in a conditionally unstable atmosphere, it
+passes through named milestones. These are the numbers the sounding report
+gives you, so meet them here as physical heights and get the full treatment
+in <a href="#storm-fuel-cape-cin-and-the-key-levels">CAPE and the key levels</a>:</p>
+<ol>
+<li><strong>LCL - lifting condensation level.</strong> The height where the rising parcel
+cools to saturation and cloud forms. This is <strong>cloud base</strong>.</li>
+<li><strong>LFC - level of free convection.</strong> The height where the parcel finally
+becomes warmer than its surroundings and starts rising <em>on its own</em>, no
+more push needed. This is the “over the lip” point.</li>
+<li><strong>EL - equilibrium level.</strong> High up, where the parcel has cooled back to
+match its surroundings and stops accelerating. This is roughly the
+<strong>storm top</strong> - the flat anvil.</li>
+</ol>
+<p>Between the surface and the LFC there is often a warm stable layer the parcel
+must be forced through - the <strong>cap</strong> or <strong>lid</strong>. The energy cost of punching
+through it is <strong>CIN</strong> (convective inhibition). Above the LFC, the parcel
+gains energy all the way to the EL - and the total gain is <strong>CAPE</strong>
+(convective available potential energy), the storm’s fuel gauge. Both are
+next chapter.</p>
+<h2 id="from-one-bubble-to-a-storm-the-convective-loop"><a class="header" href="#from-one-bubble-to-a-storm-the-convective-loop">From one bubble to a storm: the convective loop</a></h2>
+<p>Put the pieces together and you get the self-sustaining cycle that <em>is</em> a
+thunderstorm:</p>
+<ol>
+<li>Something lifts moist surface air past the cap (your seed, or a feed, or
+an air-mass boundary).</li>
+<li>Above the LFC the parcel is buoyant and accelerates upward - an
+<strong>updraft</strong> (large positive <code>W</code>).</li>
+<li>Rising cools the air to saturation; vapor condenses into <strong>cloud</strong>,
+releasing latent heat that makes the parcel <em>even more</em> buoyant. The
+updraft strengthens. This is the feedback that does the real work.</li>
+<li>Higher up, cloud droplets merge into <strong>rain</strong> that grows too heavy to
+hold. It falls, dragging cool air down as a <strong>downdraft</strong> (negative <code>W</code>).</li>
+<li>The cool downdraft spreads out at the ground as gusty <strong>outflow</strong>, which
+can lift <em>more</em> warm moist air at its leading edge - sometimes firing new
+cells. In sheared wind, the updraft and downdraft stay separated and the
+whole system organizes and persists.</li>
+</ol>
+<p>The engine simulates all of this from first principles. You never script the
+updraft; you set the stage (a conditionally unstable, moist, sheared
+sounding) and light the fuse (a seed), and the loop above runs itself.</p>
+<h2 id="how-this-maps-to-the-engine"><a class="header" href="#how-this-maps-to-the-engine">How this maps to the engine</a></h2>
+<ul>
+<li><strong>Stability</strong> lives in the sounding’s theta and vapor profiles. Author a
+strongly stable one (<code>sounding_quiet</code>) for calm; a conditionally unstable
+one (<code>sounding_convective</code>) for storms.</li>
+<li><strong>The trigger</strong> is a <code>Field::Theta</code> (and usually <code>Field::Vapor</code>) seed - a
+small warm, moist bubble that provides the initial lift.</li>
+<li><strong>The updraft</strong> shows up as large <code>W</code>, and it is what the adaptive grid
+watches: the regridder’s <code>w_above</code> trigger refines the grid wherever the
+updraft is strong, keeping resolution on the storm.</li>
+<li><strong>CAPE, CIN, LCL, LFC, EL</strong> are all reported by <code>analyze()</code> and by
+<code>probe()</code>, so you can check <em>before</em> stepping whether your sounding will
+actually storm.</li>
+</ul>
+<h2 id="takeaways-3"><a class="header" href="#takeaways-3">Takeaways</a></h2>
+<ul>
+<li>Air rises when it is <strong>warmer or moister</strong> (lighter) than its surroundings
+<ul>
+<li><strong>buoyancy</strong>, the hot-air-balloon rule.</li>
+</ul>
+</li>
+<li><strong>Stability</strong> is the column’s response to lifting: stable air pushes a
+parcel back, unstable air lets it run. Theta increasing with height =
+stable; decreasing = unstable.</li>
+<li>Storm days are <strong>conditionally unstable</strong>: stable until moist air is
+lifted past a barrier, then explosively unstable. That is why a small
+warm, moist seed can grow a whole storm.</li>
+<li>A thunderstorm is a <strong>self-feeding loop</strong>: lift -&gt; updraft -&gt; condensation
+releases heat -&gt; stronger updraft -&gt; rain -&gt; downdraft -&gt; more lift.</li>
+</ul>
+<p>You now understand weather. Part II turns this into the numbers the engine
+reads, starting with the object that holds them all: the sounding.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="the-sounding"><a class="header" href="#the-sounding">The sounding</a></h1>
+<p>A <strong>sounding</strong> is a vertical slice through the atmosphere over one spot: the
+temperature, moisture, and wind at every height, from the ground up. It is
+the single most important object in WeatherEngine, because it <em>is</em> your
+world’s starting atmosphere. Before you can run any weather, you hand the
+engine a sounding.</p>
+<p>The name comes from weather balloons, which “sound” the atmosphere by rising
+through it and radioing back readings as they climb.</p>
+<h2 id="what-a-sounding-contains"><a class="header" href="#what-a-sounding-contains">What a sounding contains</a></h2>
+<p>Three profiles, each a list of <code>(altitude, value)</code> points from the ground
+up, plus one surface number:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Profile</th><th>What it is</th><th>Field</th><th>Units</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Theta</strong></td><td>potential temperature vs. height</td><td><code>set_theta</code></td><td>K</td></tr>
+<tr><td><strong>Vapor</strong></td><td>water vapor mixing ratio vs. height</td><td><code>set_vapor</code></td><td>kg/kg</td></tr>
+<tr><td><strong>Wind</strong></td><td>east/north wind vs. height</td><td><code>set_wind</code></td><td>m/s</td></tr>
+<tr><td><strong>Surface pressure</strong></td><td>pressure at the ground</td><td><code>set_surface_pressure</code></td><td>Pa</td></tr>
+</tbody>
+</table>
+</div>
+<p>Together these decide <em>everything</em> about whether and how your world storms:
+the theta profile sets stability, the vapor profile sets the fuel, and the
+wind profile sets shear (and therefore storm organization and rotation).</p>
+<h2 id="the-sounding-handle"><a class="header" href="#the-sounding-handle">The <code>Sounding</code> handle</a></h2>
+<p>A <code>Sounding</code> is a small, pure, synchronous object. You build and inspect it
+right on the game thread - it does no simulation and costs almost nothing.
+The engine gives you three ready-made starting points:</p>
+<pre><code class="language-cpp">Box&lt;Sounding&gt; a = sounding_new();          // neutral, does nothing
+Box&lt;Sounding&gt; b = sounding_quiet();        // stable, calm reference
+Box&lt;Sounding&gt; c = sounding_convective();   // storm-ready environment
+</code></pre>
+<ul>
+<li><strong><code>sounding_new()</code></strong> - a blank, neutral atmosphere. A starting point you
+fully overwrite with your own profiles.</li>
+<li><strong><code>sounding_quiet()</code></strong> - a stable, slightly moist, calm atmosphere.
+Weather refuses to happen in it. Use it as a background or a control.</li>
+<li><strong><code>sounding_convective()</code></strong> - a storm-ready environment based on the
+classic <strong>Weisman-Klemp</strong> analytic sounding used in storm research:
+conditionally unstable up to a 12 km tropopause, a moist boundary layer,
+and wind that veers and strengthens with height. This is the one you seed
+a bubble into to make a thunderstorm. Start here.</li>
+</ul>
+<h3 id="authoring-your-own-profiles"><a class="header" href="#authoring-your-own-profiles">Authoring your own profiles</a></h3>
+<p>To build a custom atmosphere, set each profile from an array of points
+(altitudes must ascend). Values between your points are interpolated, and
+above your top point the last value holds.</p>
+<pre><code class="language-cpp">Box&lt;Sounding&gt; sounding = sounding_new();
+
+// Potential temperature: gently stable low down (a storm profile).
+ProfilePoint theta[] = {
+    {    0.0f, 300.0f},
+    {12000.0f, 343.0f},   // tropopause
+    {20000.0f, 380.0f},   // stable stratosphere above
+};
+sounding-&gt;set_theta(Slice&lt;const ProfilePoint&gt;{theta, 3});
+
+// Vapor: moist near the ground, drying out with height.
+ProfilePoint vapor[] = {
+    {    0.0f, 0.014f},   // 14 g/kg - moist boundary layer
+    { 3000.0f, 0.006f},
+    {10000.0f, 0.0005f},
+};
+sounding-&gt;set_vapor(Slice&lt;const ProfilePoint&gt;{vapor, 3});
+
+// Wind: veering and strengthening with height (east, north).
+WindPoint wind[] = {
+    {    0.0f, -8.0f, -6.0f},
+    { 6000.0f,  8.0f,  1.0f},
+    {12000.0f, 12.0f,  2.0f},
+};
+sounding-&gt;set_wind(Slice&lt;const WindPoint&gt;{wind, 3});
+
+sounding-&gt;set_surface_pressure(100000.0f);  // ~1000 hPa, sea-level-ish
+</code></pre>
+<p>You do not have to set all four. Anything you leave alone keeps the starting
+value of whichever constructor you began from. A common pattern is to take
+<code>sounding_convective()</code> and only tweak the wind, or only moisten the low
+levels.</p>
+<blockquote>
+<p><strong>Tip:</strong> Surface pressure near sea level is about <strong>101325 Pa</strong> (1013
+hPa). Higher ground means lower surface pressure. If you are not modeling
+altitude on purpose, <code>100000.0f</code> (1000 hPa) is a clean, standard choice.</p>
+</blockquote>
+<h2 id="analyzing-a-sounding-before-you-run"><a class="header" href="#analyzing-a-sounding-before-you-run">Analyzing a sounding before you run</a></h2>
+<p>Because a sounding is pure data, you can ask it what kind of weather it will
+support <em>without starting a simulation</em>. This is how you tune an environment
+quickly.</p>
+<pre><code class="language-cpp">SoundingReportData report = sounding-&gt;analyze();
+std::printf("CAPE %.0f J/kg, 0-6km shear (%.1f, %.1f) m/s, 0-1km SRH %.0f\n",
+            report.cape, report.shear_0_6km.x, report.shear_0_6km.y,
+            report.srh_0_1km);
+</code></pre>
+<p><code>analyze()</code> lifts a surface parcel through the profile and measures the storm
+ingredients: CAPE, CIN, the key levels (LCL, LFC, EL), bulk shear, storm
+motion, and helicity. Those numbers, and what counts as “a lot,” are the
+subject of the next two chapters (<a href="#storm-fuel-cape-cin-and-the-key-levels">CAPE and the key levels</a>,
+<a href="#wind-shear-and-rotating-storms">Wind shear and rotating storms</a>).</p>
+<p>A few helpers on the same handle:</p>
+<ul>
+<li><strong><code>analyze_below(top)</code></strong> - same analysis but cap the parcel’s climb at
+<code>top</code> meters (useful for shallow-domain checks). <code>analyze()</code> caps at 16
+km.</li>
+<li><strong><code>bunkers_right_mover()</code></strong> - just the estimated supercell motion vector
+(m/s). Subtract it from your wind profile to keep a supercell parked in a
+fixed domain (see the <a href="#recipes">recipes</a>).</li>
+<li><strong><code>report_text(top)</code></strong> - a multi-line, plain-language summary you can log
+while tuning.</li>
+</ul>
+<h2 id="the-sounding-does-two-jobs"><a class="header" href="#the-sounding-does-two-jobs">The sounding does two jobs</a></h2>
+<p>It helps to keep these separate in your head:</p>
+<ol>
+<li><strong>The base state.</strong> When you <code>create_sim</code>, the sounding becomes the
+background atmosphere the whole domain starts in - the calm air that
+perturbations (seeds, feeds) are measured <em>against</em>. This is the “given”
+the <a href="#heat-and-potential-temperature">Heat</a> and <a href="#water-in-the-air">Water</a> chapters kept
+referring to.</li>
+<li><strong>A brush.</strong> You can also hand a <em>different</em> sounding to a scenario as an
+<strong>air mass</strong> - a region painted with another atmosphere’s air (a cold
+pool, a moist tongue, a dry slot). More in
+<a href="#starting-the-weather-scenarios">Scenarios</a>.</li>
+</ol>
+<h2 id="takeaways-4"><a class="header" href="#takeaways-4">Takeaways</a></h2>
+<ul>
+<li>A <strong>sounding</strong> is the atmosphere by height: theta, vapor, and wind
+profiles plus surface pressure. It is your world’s starting air.</li>
+<li>The <code>Sounding</code> handle is cheap and synchronous. Start from
+<code>sounding_convective()</code> for storms, <code>sounding_quiet()</code> for calm, or
+<code>sounding_new()</code> to build from scratch.</li>
+<li>Author profiles with <code>set_theta</code> / <code>set_vapor</code> / <code>set_wind</code> /
+<code>set_surface_pressure</code>, as ascending <code>(altitude, value)</code> points.</li>
+<li><strong><code>analyze()</code> tells you what a sounding will do before you run it</strong> -
+CAPE, shear, helicity, and the key levels. Tune here; it is instant.</li>
+</ul>
+<p>Next: reading that report - CAPE, CIN, and the levels that decide if you get
+a storm at all.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="storm-fuel-cape-cin-and-the-key-levels"><a class="header" href="#storm-fuel-cape-cin-and-the-key-levels">Storm fuel: CAPE, CIN, and the key levels</a></h1>
+<p>When you call <code>analyze()</code> on a sounding (or <code>probe()</code> a live column), you get
+back a <code>SoundingReportData</code>. This page decodes the thermodynamic half of
+that report - the numbers that answer “will this air storm, and how hard?”
+The wind half (shear, helicity, storm motion) is the <a href="#wind-shear-and-rotating-storms">next
+chapter</a>.</p>
+<p>All of these come from one thought experiment: <strong>lift a parcel of surface air
+straight up and watch how it compares to its surroundings at each height.</strong>
+That is the story from <a href="#why-air-rises-stability-and-convection">Why air rises</a>, now turned into
+numbers.</p>
+<h2 id="cape---the-fuel-gauge"><a class="header" href="#cape---the-fuel-gauge">CAPE - the fuel gauge</a></h2>
+<p><strong>CAPE</strong> stands for <em>Convective Available Potential Energy</em>. It is the total
+energy a rising parcel gains from buoyancy on its way up - the size of the
+storm’s fuel tank. Units are <strong>joules per kilogram</strong> (J/kg), and it is the
+field <code>report.cape</code>.</p>
+<p>Bigger CAPE means the updraft can accelerate harder and reach higher, which
+means stronger storms, taller clouds, bigger hail, heavier rain.</p>
+<blockquote>
+<p><strong>ELI5:</strong> CAPE is how much “push up” the atmosphere has stored for a parcel
+that gets going. Small CAPE is a gentle nudge. Huge CAPE is a trampoline.</p>
+</blockquote>
+<p>A rough scale to calibrate your soundings:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>CAPE (J/kg)</th><th>What to expect</th></tr>
+</thead>
+<tbody>
+<tr><td>0</td><td>No convection possible. Parcel never becomes buoyant.</td></tr>
+<tr><td>100 - 1000</td><td>Weak - small showers, fair-weather cumulus.</td></tr>
+<tr><td>1000 - 2500</td><td>Moderate - healthy thunderstorms.</td></tr>
+<tr><td>2500 - 4000</td><td>Strong - severe storm potential.</td></tr>
+<tr><td>4000+</td><td>Extreme - explosive updrafts.</td></tr>
+</tbody>
+</table>
+</div>
+<p>The engine’s <code>sounding_convective()</code> sits comfortably in the storm-producing
+range. If your custom sounding reports CAPE near zero, it will not storm no
+matter how hard you seed it - the fix is a <strong>warmer or (more often) moister
+low level</strong>, which raises CAPE.</p>
+<h2 id="cin---the-lid-you-must-break"><a class="header" href="#cin---the-lid-you-must-break">CIN - the lid you must break</a></h2>
+<p><strong>CIN</strong> stands for <em>Convective Inhibition</em>. It is the energy the parcel
+<strong>loses</strong> in the stable layer near the ground before it reaches the height
+where it becomes buoyant. It is the strength of the “cap” or “lid” holding
+the storm down. Units are J/kg; the field <code>report.cin</code> is reported as a
+positive magnitude (a bigger number = a stronger cap).</p>
+<p>CIN is the barrier from the ball-in-a-dip analogy. Your seed (or feed, or
+air-mass boundary) has to supply enough lift to carry the parcel over it.</p>
+<ul>
+<li><strong>Low CIN</strong> (near 0) - almost no cap. Storms fire easily, even from a
+small seed. Can be <em>too</em> easy: everything erupts at once.</li>
+<li><strong>Moderate CIN</strong> - a cap that suppresses weak triggers but breaks under a
+strong one. This is the sweet spot: it lets pressure build so that when a
+storm goes, it goes big and isolated (the classic supercell setup).</li>
+<li><strong>High CIN</strong> - a strong cap. Even a good seed may fail to break through.
+If your storms fizzle immediately, high CIN is a prime suspect.</li>
+</ul>
+<p>There is a real tension here: <strong>CAPE wants to be high (more fuel) and CIN
+wants to be low enough that your trigger can break it.</strong> High CAPE with a
+cap that never breaks produces nothing. Tuning a good storm environment is
+largely balancing these two.</p>
+<h2 id="the-three-key-levels"><a class="header" href="#the-three-key-levels">The three key levels</a></h2>
+<p>As the parcel rises it passes three named heights, all reported in meters.
+Any of them can be <strong>NaN</strong> (not-a-number) if it does not exist for that
+sounding - for example, a parcel that never becomes buoyant has no LFC or EL.
+Always check for NaN before using them.</p>
+<h3 id="lcl---lifting-condensation-level-reportlcl"><a class="header" href="#lcl---lifting-condensation-level-reportlcl">LCL - lifting condensation level (<code>report.lcl</code>)</a></h3>
+<p>The height where the rising parcel cools to saturation and <strong>cloud forms</strong> -
+literally <strong>cloud base</strong>. A <strong>low LCL</strong> means moist air and clouds that sit
+close to the ground; a <strong>high LCL</strong> means dry air and high, ragged cloud
+bases. Low LCL is one ingredient in tornado-friendly setups (the rotation
+has less distance to reach the ground).</p>
+<h3 id="lfc---level-of-free-convection-reportlfc"><a class="header" href="#lfc---level-of-free-convection-reportlfc">LFC - level of free convection (<code>report.lfc</code>)</a></h3>
+<p>The height where the parcel finally becomes warmer than its surroundings and
+rises <strong>on its own</strong>, no more lift needed. This is the “over the lip of the
+dip” point - above it, the storm is self-sustaining. The gap between the
+surface and the LFC is the capped layer whose energy cost is CIN.</p>
+<h3 id="el---equilibrium-level-reportel"><a class="header" href="#el---equilibrium-level-reportel">EL - equilibrium level (<code>report.el</code>)</a></h3>
+<p>High up, where the parcel has cooled back to match its surroundings and
+stops accelerating. This is roughly the <strong>storm top</strong> - the height of the
+flat anvil cloud. A high EL means a deep storm. It also tells you how tall
+your simulation domain needs to be: if your domain top is below the EL,
+you are clipping the storm.</p>
+<p>Here is the vertical picture:</p>
+<pre><code>  EL   ~ 12 km  --- storm top / anvil; parcel stops rising
+       |
+       |         &lt;- parcel buoyant here; energy gained = CAPE
+  LFC  ~ 2 km   --- becomes buoyant on its own ("over the lip")
+       |         &lt;- capped layer; energy lost = CIN
+  LCL  ~ 1 km   --- cloud base; vapor starts condensing
+       |         &lt;- parcel lifted by your seed, still not buoyant
+ sfc     0 m    --- surface parcel starts here
+</code></pre>
+<h2 id="reading-the-report-in-code"><a class="header" href="#reading-the-report-in-code">Reading the report in code</a></h2>
+<pre><code class="language-cpp">SoundingReportData r = sounding-&gt;analyze();
+if (!r.valid) { /* probe fell outside the domain; ignore */ }
+
+std::printf("CAPE %.0f J/kg   CIN %.0f J/kg\n", r.cape, r.cin);
+std::printf("cloud base (LCL) %.0f m\n", r.lcl);
+if (!std::isnan(r.lfc)) std::printf("self-sustaining above (LFC) %.0f m\n", r.lfc);
+if (!std::isnan(r.el))  std::printf("storm top (EL) %.0f m\n", r.el);
+</code></pre>
+<p>The same <code>SoundingReportData</code> shape comes back three ways, always meaning the
+same thing:</p>
+<ul>
+<li>from <strong><code>analyze()</code></strong> on a sounding you authored (before running),</li>
+<li>from <strong><code>probe(position)</code></strong> on a <strong>live</strong> simulation column (an <code>Probed</code>
+event) - the effective sounding <em>right now</em> at a spot, which changes as
+the storm modifies its own environment,</li>
+<li>and its two headline composite indices, <code>supercell_composite</code> and
+<code>significant_tornado</code>, combine this thermodynamic fuel with the wind
+ingredients from the next chapter.</li>
+</ul>
+<h2 id="a-tuning-checklist"><a class="header" href="#a-tuning-checklist">A tuning checklist</a></h2>
+<p>When an environment is not behaving, read the report in this order:</p>
+<ol>
+<li><strong>CAPE near zero?</strong> No fuel. Moisten the low levels or warm the surface.</li>
+<li><strong>CAPE fine but nothing fires?</strong> The cap (CIN) is too strong for your
+seed. Seed harder (bigger warm/moist amplitude), or soften the cap.</li>
+<li><strong>Everything erupts instantly and messily?</strong> CIN is too low. Add a little
+cap so storms stay isolated.</li>
+<li><strong>Storm looks chopped off at the top?</strong> Your domain top is below the EL.
+Raise the domain (taller vertical axis).</li>
+</ol>
+<h2 id="takeaways-5"><a class="header" href="#takeaways-5">Takeaways</a></h2>
+<ul>
+<li><strong>CAPE</strong> (J/kg) is the fuel: how much energy a rising parcel gains. Higher
+= stronger storms. Aim for ~1000+ to storm, ~2500+ for severe.</li>
+<li><strong>CIN</strong> (J/kg) is the cap: energy the parcel must be forced through first.
+Some CIN is good (isolated storms); too much means your seed cannot break
+it.</li>
+<li><strong>LCL / LFC / EL</strong> are cloud base, the self-sustaining height, and the
+storm top, in meters. They can be <strong>NaN</strong> - check before use. The EL also
+tells you how tall your domain must be.</li>
+<li>The same report comes from <code>analyze()</code> (before) and <code>probe()</code> (live), so
+you can tune offline and monitor online.</li>
+</ul>
+<p>Next: the wind ingredients that decide whether all this fuel builds a shower
+or a rotating supercell.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="wind-shear-and-rotating-storms"><a class="header" href="#wind-shear-and-rotating-storms">Wind shear and rotating storms</a></h1>
+<p>CAPE tells you how <em>strong</em> a storm can be. The wind ingredients tell you
+what <em>shape</em> it takes: a brief blob that rains itself out, or an organized,
+rotating supercell that lives for hours and spins up tornadoes. This page
+covers the wind half of the <code>SoundingReportData</code> - shear, helicity, storm
+motion, and the two composite indices - and how to use them.</p>
+<h2 id="recap-shear-organizes-storms"><a class="header" href="#recap-shear-organizes-storms">Recap: shear organizes storms</a></h2>
+<p>From <a href="#wind">Wind</a>: <strong>wind shear</strong> is the change of wind with height.
+Low shear lets a storm’s rain fall back into its own updraft and choke it
+(short-lived showers). High shear blows the rain and downdraft away from the
+updraft so the two do not fight, letting the storm stand up, breathe, and
+persist. High shear is the price of admission for organized severe weather.</p>
+<p>The engine reports <strong>0-6 km bulk shear</strong> as <code>report.shear_0_6km</code>, a vector
+in m/s: the wind at ~6 km minus the wind at the surface. Its <em>magnitude</em> is
+what matters most.</p>
+<pre><code class="language-cpp">Vec2 s = report.shear_0_6km;
+float shear_mag = std::sqrt(s.x*s.x + s.y*s.y);   // m/s
+</code></pre>
+<p>Rough guide to the magnitude:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>0-6 km shear (m/s)</th><th>Storm mode</th></tr>
+</thead>
+<tbody>
+<tr><td>&lt; 10</td><td>Weak - disorganized single cells (“popcorn”).</td></tr>
+<tr><td>10 - 20</td><td>Moderate - multicell clusters and lines.</td></tr>
+<tr><td>20 - 30</td><td>Strong - supercells become possible.</td></tr>
+<tr><td>30+</td><td>Very strong - classic supercell shear.</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="helicity-shear-that-spins"><a class="header" href="#helicity-shear-that-spins">Helicity: shear that spins</a></h2>
+<p>Shear magnitude says the wind <em>changes</em> a lot. But to make a storm <em>rotate</em>,
+the wind also has to <strong>turn</strong> (veer) with height, not just speed up in a
+straight line. Turning wind gives the low-level air a horizontal spin, like
+a rolling pin lying on the ground. A storm’s updraft tilts that horizontal
+spin upright and stretches it into a vertical, rotating column - a
+<strong>mesocyclone</strong>, the rotating heart of a supercell.</p>
+<p>The quantity that measures “how much spinning air the storm can ingest” is
+<strong>storm-relative helicity</strong> (SRH). Units are <strong>m²/s²</strong> (meters squared per
+second squared - it is an energy-like measure of streamwise spin). The engine
+reports two depths:</p>
+<ul>
+<li><code>report.srh_0_1km</code> - helicity in the lowest 1 km. This is the one tied to
+<strong>low-level rotation and tornado potential</strong>.</li>
+<li><code>report.srh_0_3km</code> - helicity in the lowest 3 km. Tied to overall
+<strong>supercell organization</strong>.</li>
+</ul>
+<blockquote>
+<p><strong>ELI5:</strong> Imagine air near the ground rolling forward like a pencil rolling
+on a desk. A strong updraft grabs that rolling pencil, stands it on end,
+and spins it fast - now the storm is turning. SRH counts how much rolling
+the storm has to grab.</p>
+</blockquote>
+<p>Rough guide to <code>srh_0_1km</code>:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>0-1 km SRH (m²/s²)</th><th>Rotation potential</th></tr>
+</thead>
+<tbody>
+<tr><td>&lt; 100</td><td>Little low-level rotation.</td></tr>
+<tr><td>100 - 200</td><td>Supercells with rotation likely.</td></tr>
+<tr><td>200 - 300</td><td>Strong rotation; tornado-favorable.</td></tr>
+<tr><td>300+</td><td>Very high; significant-tornado territory.</td></tr>
+</tbody>
+</table>
+</div>
+<p>Helicity is “storm-relative” - it depends on how fast the storm itself is
+moving through the wind field. Which brings us to storm motion.</p>
+<h2 id="storm-motion-where-the-storm-goes-and-how-to-park-it"><a class="header" href="#storm-motion-where-the-storm-goes-and-how-to-park-it">Storm motion: where the storm goes (and how to park it)</a></h2>
+<p>A supercell does <strong>not</strong> simply drift with the average wind. Because of the
+way its rotating updraft interacts with the shear, it deviates - a
+right-moving supercell (in this wind setup) pulls to the <em>right</em> of the mean
+wind and moves slower. There is a well-known empirical estimate of this
+called the <strong>Bunkers storm motion</strong>, and the engine computes it for you:</p>
+<ul>
+<li><code>report.storm_motion</code> - the Bunkers right-mover motion vector (m/s).</li>
+<li><code>sounding-&gt;bunkers_right_mover()</code> - the same vector, if that is all you
+need.</li>
+</ul>
+<p>This is enormously practical, because of the problem from <a href="#wind">Wind</a>:
+<strong>a moving storm walks off your grid.</strong> The fix is to subtract the storm
+motion from your entire wind profile. That shifts you into a frame that moves
+<em>with</em> the storm - the storm sits still in the middle of your domain while
+the environment flows past it. You keep the same relative winds (so the same
+shear and helicity, so the same storm), you just stop it from translating.</p>
+<pre><code class="language-cpp">// Park a supercell: subtract its predicted motion from every wind level.
+Vec2 motion = sounding-&gt;bunkers_right_mover();
+WindPoint wind[] = { /* your levels ... */ };
+for (WindPoint&amp; w : wind) {
+    w.east  -= static_cast&lt;float&gt;(motion.x);
+    w.north -= static_cast&lt;float&gt;(motion.y);
+}
+sounding-&gt;set_wind(Slice&lt;const WindPoint&gt;{wind, count});
+</code></pre>
+<p>The full version is in the <a href="#recipes">recipes</a>. If instead you <em>want</em>
+the storm to travel across a big map, skip this and let the <a href="#following-the-storm-the-adaptive-grid">adaptive
+grid</a> chase it.</p>
+<h2 id="the-composite-indices-one-number-screens"><a class="header" href="#the-composite-indices-one-number-screens">The composite indices: one-number screens</a></h2>
+<p>Combining CAPE, shear, and helicity by hand is fiddly, so meteorologists use
+<strong>composite parameters</strong> that fold the ingredients into a single number.
+The engine reports two, both dimensionless:</p>
+<ul>
+<li><strong><code>supercell_composite</code></strong> (SCP) - roughly, is this a supercell
+environment? Values around 1 and up indicate supercell-supportive
+conditions; higher is stronger.</li>
+<li><strong><code>significant_tornado</code></strong> (STP) - is this a <em>significant tornado</em>
+environment? Values around 1 and up flag setups capable of strong
+tornadoes.</li>
+</ul>
+<p>Use these as quick screens while tuning: bump moisture, shear, or low-level
+turning until SCP and STP climb into the range you want, then look at the
+individual ingredients to see <em>which</em> lever moved.</p>
+<pre><code class="language-cpp">std::printf("SCP %.1f  STP %.1f\n",
+            report.supercell_composite, report.significant_tornado);
+</code></pre>
+<p>Think of them as difficulty dials for “how severe is this world,” not as
+physics inputs - the simulation runs off the profiles; the indices just
+summarize them.</p>
+<h2 id="putting-the-ingredients-together"><a class="header" href="#putting-the-ingredients-together">Putting the ingredients together</a></h2>
+<p>A severe, rotating storm needs all of these at once. The recipe, in the
+engine’s own numbers:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Ingredient</th><th>Report field</th><th>Want (for a supercell)</th></tr>
+</thead>
+<tbody>
+<tr><td>Fuel</td><td><code>cape</code></td><td>2000+ J/kg</td></tr>
+<tr><td>A breakable cap</td><td><code>cin</code></td><td>modest, not huge</td></tr>
+<tr><td>Deep shear</td><td><code>shear_0_6km</code></td><td>20+ m/s magnitude</td></tr>
+<tr><td>Low-level spin</td><td><code>srh_0_1km</code></td><td>150+ m²/s²</td></tr>
+<tr><td>Screen</td><td><code>supercell_composite</code></td><td>≥ 1</td></tr>
+</tbody>
+</table>
+</div>
+<p>Miss any one and you get something less: lots of CAPE but no shear gives a
+pulse storm that collapses on itself; lots of shear but no CAPE gives windy
+nothing. <code>sounding_convective()</code> is built to have all of them, which is why
+it is the recommended starting environment.</p>
+<h2 id="takeaways-6"><a class="header" href="#takeaways-6">Takeaways</a></h2>
+<ul>
+<li><strong>0-6 km bulk shear</strong> (<code>shear_0_6km</code>, m/s) sets storm organization; ~20+
+m/s magnitude enables supercells.</li>
+<li><strong>Storm-relative helicity</strong> (<code>srh_0_1km</code> / <code>srh_0_3km</code>, m²/s²) measures
+spinning air the storm can ingest; the 0-1 km value drives low-level
+rotation and tornado potential.</li>
+<li><strong>Bunkers storm motion</strong> (<code>storm_motion</code> / <code>bunkers_right_mover()</code>)
+predicts where a supercell goes; <strong>subtract it from the wind profile to
+park the storm</strong> in a fixed domain.</li>
+<li><strong><code>supercell_composite</code></strong> and <strong><code>significant_tornado</code></strong> are one-number
+screens combining the ingredients - handy difficulty dials while tuning.</li>
+<li>A real supercell needs fuel <em>and</em> shear <em>and</em> helicity together;
+<code>sounding_convective()</code> supplies all three.</li>
+</ul>
+<p>That completes the meteorology. Part III is the engine: how it runs, how you
+build a world, and how you drive it each frame.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="how-the-engine-is-shaped"><a class="header" href="#how-the-engine-is-shaped">How the engine is shaped</a></h1>
+<p>You now understand the weather. Part III is the machine that simulates it.
+This first page is the mental model of <em>how you talk to the engine</em> - which
+matters a lot, because WeatherEngine is built around one firm rule: <strong>the
+simulation must never stall your game.</strong></p>
+<h2 id="the-problem-it-solves"><a class="header" href="#the-problem-it-solves">The problem it solves</a></h2>
+<p>A weather step is heavy. Advancing a storm one tick can take milliseconds -
+sometimes many. If your game called into the simulation and waited for it to
+finish, every heavy step would freeze the frame. That is unacceptable in a
+game running at 60 or 120 frames per second.</p>
+<p>So WeatherEngine does not run on your game thread at all. It runs on its own
+<strong>background worker thread</strong>, and you talk to it by message-passing. You send
+it a command and immediately get on with your frame; later, you pick up the
+result whenever it is ready. Nothing you call ever blocks.</p>
+<h2 id="the-actor-pattern"><a class="header" href="#the-actor-pattern">The actor pattern</a></h2>
+<p>This design is called an <strong>actor</strong>: one owner of the state, talked to only
+through messages.</p>
+<pre><code>   your game thread                         the worker thread
+  ------------------                       -------------------
+   client-&gt;advance(...)  --- command ---&gt;   (parks until a command
+   client-&gt;grab_...(...) --- command ---&gt;    arrives, then runs the
+                                             heavy step here)
+   client-&gt;poll()        &lt;-- event ------   posts results back
+   client-&gt;poll()        &lt;-- event ------
+</code></pre>
+<ul>
+<li><strong>You send commands</strong> with methods on a <code>SimClient</code>: <code>create_sim</code>,
+<code>advance</code>, <code>grab_presets</code>, <code>probe</code>, and so on. Each one is
+<strong>non-blocking</strong> - it drops a message in a queue and returns right away.</li>
+<li><strong>The worker owns the actual simulation.</strong> It sleeps when the queue is
+empty and wakes up to run each command. Heavy work happens here, off your
+frame.</li>
+<li><strong>You poll for results</strong> with <code>poll()</code>, which hands back one <code>SimEvent</code> at
+a time, or an empty one if nothing is ready yet. You never wait; you just
+check what has arrived and move on.</li>
+</ul>
+<p>The key property: <strong>there is no shared, locked state between the two
+threads.</strong> Data moves only as messages. That is what keeps the game thread
+free.</p>
+<h2 id="sending-a-command-the-request-id"><a class="header" href="#sending-a-command-the-request-id">Sending a command: the request id</a></h2>
+<p>Every command method returns a <code>uint64_t</code> <strong>request id</strong>:</p>
+<pre><code class="language-cpp">uint64_t id = client-&gt;advance(5, 5);
+if (id == 0) {
+    // The command queue was full - the worker is behind. Skip this
+    // frame's command and try again next frame. This is normal
+    // backpressure, not an error.
+}
+</code></pre>
+<ul>
+<li>A <strong>non-zero id</strong> means the command was accepted and queued. The event
+that eventually answers it will carry the same id in <code>event-&gt;seq()</code>, so
+you can match responses to requests if you need to.</li>
+<li><strong>Zero</strong> means the request queue was full. The queue is bounded (it holds
+a few hundred commands), so this only happens if you fire commands far
+faster than the worker drains them. The right response is simply to skip
+and retry next frame - never to spin or block.</li>
+</ul>
+<h2 id="receiving-results-poll-and-drain"><a class="header" href="#receiving-results-poll-and-drain">Receiving results: poll and drain</a></h2>
+<p>Results come back as <strong>events</strong>. Each frame you <strong>drain</strong> the event queue -
+poll repeatedly until it is empty - and act on whatever you find:</p>
+<pre><code class="language-cpp">for (;;) {
+    Box&lt;SimEvent&gt; event = client-&gt;poll();
+    SimEventKind kind = event-&gt;kind();
+    if (kind == SimEventKind::None) {
+        break;  // queue empty - done for this frame
+    }
+    switch (kind) {
+    case SimEventKind::Advanced:  /* read event-&gt;status()   */ break;
+    case SimEventKind::Grabbed:   /* take the volume, render */ break;
+    case SimEventKind::Regridded: /* read the regrid summary */ break;
+    case SimEventKind::Error:     /* log error_message()     */ break;
+    default: break;
+    }
+}
+</code></pre>
+<p>An event is a small tagged object. <code>event-&gt;kind()</code> tells you which variant it
+is; then you call the matching accessor. Here is the full set:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th><code>SimEventKind</code></th><th>Sent in answer to</th><th>Read it with</th></tr>
+</thead>
+<tbody>
+<tr><td><code>None</code></td><td>(queue was empty)</td><td>nothing</td></tr>
+<tr><td><code>Error</code></td><td>any failed command</td><td><code>error_message()</code></td></tr>
+<tr><td><code>SimReady</code></td><td><code>create_sim</code> / <code>load_snapshot</code></td><td><code>status()</code></td></tr>
+<tr><td><code>Advanced</code></td><td><code>advance</code></td><td><code>status()</code></td></tr>
+<tr><td><code>Regridded</code></td><td>a regrid during <code>advance</code></td><td><code>regrid_summary()</code></td></tr>
+<tr><td><code>Grabbed</code></td><td><code>grab_fields</code> / <code>grab_presets</code></td><td><code>take_grab()</code></td></tr>
+<tr><td><code>Probed</code></td><td><code>probe</code></td><td><code>probe_report()</code></td></tr>
+<tr><td><code>Status</code></td><td><code>install_scenario</code> / <code>set_regridder</code> / <code>query</code></td><td><code>status()</code></td></tr>
+<tr><td><code>Values</code></td><td><code>query_max</code> / <code>query_precipitation</code></td><td><code>values()</code>, <code>value_dims()</code></td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Nothing is ever pushed to you unsolicited.</strong> Every event answers a command
+you sent. If you did not ask for a grab, no grab arrives.</p>
+<h2 id="no-exceptions-ever"><a class="header" href="#no-exceptions-ever">No exceptions, ever</a></h2>
+<p>WeatherEngine never throws. A bad configuration - an impossible grid, a
+physically unstable time step, a malformed snapshot - does not crash or
+abort. It comes back as an <strong><code>Error</code> event</strong> with a human-readable message:</p>
+<pre><code class="language-cpp">case SimEventKind::Error:
+    std::printf("sim error: %s\n",
+                std::string(event-&gt;error_message()).c_str());
+    break;
+</code></pre>
+<p>This means you can experiment freely. The worst a wrong number does is
+produce an <code>Error</code> you can read and fix.</p>
+<h2 id="the-threading-budget"><a class="header" href="#the-threading-budget">The threading budget</a></h2>
+<p>When you spawn the worker you also set how many CPU cores its heavy math may
+use:</p>
+<pre><code class="language-cpp">Box&lt;SimClient&gt; client = new_sim_client(8);   // cap the sim at 8 cores
+std::printf("using %u threads\n", client-&gt;worker_thread_count());
+</code></pre>
+<p><code>new_sim_client(worker_threads)</code> builds a <strong>private thread pool</strong> of exactly
+that many threads, and <em>all</em> simulation work runs inside it. That is a hard
+cap: the weather can never grab more than those cores, so a heavy step cannot
+saturate the machine and starve your renderer.</p>
+<ul>
+<li>Pass a number a few below your core count - e.g. <strong>8 on a 12-thread CPU</strong> -
+to leave headroom for the game and the graphics engine.</li>
+<li>Pass <strong>0</strong> to mean “every logical core” (use only if the sim has the
+machine to itself).</li>
+<li><code>worker_thread_count()</code> reports the resolved value (never 0).</li>
+</ul>
+<h2 id="the-lifecycle-at-a-glance"><a class="header" href="#the-lifecycle-at-a-glance">The lifecycle at a glance</a></h2>
+<p>Everything in the rest of Part III fits this sequence:</p>
+<ol>
+<li><strong>Describe</strong> the air - author a <code>Sounding</code> (Part II).</li>
+<li><strong>Spawn</strong> the worker - <code>new_sim_client(threads)</code>.</li>
+<li><strong>Build</strong> the world - <code>create_sim(config, axis, sounding, options)</code>, wait
+for <code>SimReady</code>. See <a href="#building-a-world-grid-and-vertical-axis">Building a world</a>.</li>
+<li><strong>Start the weather</strong> - <code>install_scenario(...)</code> (seeds, feeds, air
+masses), optionally <code>set_regridder(...)</code>. See
+<a href="#starting-the-weather-scenarios">Scenarios</a> and <a href="#following-the-storm-the-adaptive-grid">the adaptive grid</a>.</li>
+<li><strong>Each frame</strong> - <code>advance(...)</code>, <code>grab_*(...)</code>, then drain <code>poll()</code>.
+Render the grabbed volumes. See <a href="#getting-data-back-out">Getting data back out</a>.</li>
+<li><strong>Shut down</strong> - drop the <code>SimClient</code> (or call <code>shutdown()</code>) to stop and
+join the worker.</li>
+</ol>
+<h2 id="takeaways-7"><a class="header" href="#takeaways-7">Takeaways</a></h2>
+<ul>
+<li>The simulation runs on a <strong>background worker thread</strong>; you talk to it
+through a <code>SimClient</code> by message-passing. <strong>Nothing blocks your frame.</strong></li>
+<li><strong>Commands</strong> are non-blocking and return a <strong>request id</strong>; <code>0</code> means the
+queue was full - skip and retry, it is normal backpressure.</li>
+<li><strong>Results</strong> are <strong>events</strong> you <code>poll()</code> and drain each frame; match on
+<code>kind()</code> and call the right accessor. Nothing arrives unsolicited.</li>
+<li><strong>No exceptions</strong> - failures are <code>Error</code> events you can read.</li>
+<li><code>new_sim_client(threads)</code> caps how many cores the weather can use; leave
+headroom for the game.</li>
+</ul>
+<p>Next: building the actual world - the grid and the vertical axis.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="building-a-world-grid-and-vertical-axis"><a class="header" href="#building-a-world-grid-and-vertical-axis">Building a world: grid and vertical axis</a></h1>
+<p>To simulate the air, the engine chops your world into a 3D grid of cells and
+solves the physics cell by cell. <code>create_sim</code> builds that grid. You describe
+it with two structs: a <strong><code>GridConfig</code></strong> for the horizontal layout and an
+<strong><code>AxisConfig</code></strong> for the vertical layout. This page explains every field in
+plain terms and how to size them.</p>
+<h2 id="the-trade-off-you-are-making"><a class="header" href="#the-trade-off-you-are-making">The trade-off you are making</a></h2>
+<p>One rule governs every choice here: <strong>smaller cells are more accurate but
+cost more.</strong> Halving the cell size roughly multiplies the work per step by
+8 (twice as many cells in each of x, y, z) <em>and</em> forces smaller time steps,
+so the real cost climbs even faster. Your whole job when configuring a world
+is to spend fine cells only where they matter and stay coarse elsewhere. The
+<a href="#following-the-storm-the-adaptive-grid">adaptive grid</a> is the engine’s main tool for that; here you
+set the stage.</p>
+<p>A useful number: to actually <em>resolve</em> a convective updraft you want cells of
+roughly <strong>100-250 m</strong>. Bigger than that and storms are mushy; much smaller
+and you pay dearly. The examples use <strong>200 m</strong> finest cells, which is the
+sweet spot.</p>
+<h2 id="horizontal-layout-gridconfig"><a class="header" href="#horizontal-layout-gridconfig">Horizontal layout: <code>GridConfig</code></a></h2>
+<pre><code class="language-cpp">GridConfig config{};
+config.dx_finest  = 200.0;                 // finest cell size, meters
+config.levels     = 3;                      // quadtree refinement levels
+config.brick_size = 8;                      // cells per brick edge
+config.halo_width = 4;                      // halo ring, cells
+config.base_bricks = VoxelDims{16, 16, 0};  // coarse bricks in x, y
+config.origin      = Vec2{-51200.0, -51200.0};  // low corner, world meters
+</code></pre>
+<p>Field by field:</p>
+<ul>
+<li>
+<p><strong><code>dx_finest</code></strong> - the size of the <em>finest</em> horizontal cell, in meters.
+This is your best-case resolution. 200 m is a good default.</p>
+</li>
+<li>
+<p><strong><code>levels</code></strong> - how many levels of refinement the grid can have. <code>1</code> means
+a <strong>uniform</strong> grid: every cell is <code>dx_finest</code>, everywhere, all the time.
+<code>2</code>, <code>3</code>, … allow the grid to be <strong>coarse by default and refine down</strong>
+toward <code>dx_finest</code> only where a storm is. Each extra level halves the cell
+size. This is a <em>quadtree</em>: horizontally, a coarse cell splits into 4 finer
+ones (2x2). The coarsest cell size is <code>dx_finest * 2^(levels-1)</code>.</p>
+<blockquote>
+<p>With <code>levels = 3</code> and <code>dx_finest = 200</code>, the coarsest cells are
+<code>200 * 4 = 800</code> m and the finest are 200 m. The calm air runs cheaply at
+800 m; the storm gets the full 200 m.</p>
+</blockquote>
+</li>
+<li>
+<p><strong><code>brick_size</code></strong> - the grid is stored in <strong>bricks</strong> (small cubes of
+cells), and this is the cells-per-edge of a brick. <code>8</code> means each brick is
+8x8x8 cells. Refinement happens a whole brick at a time, not a single
+cell. <code>8</code> is the standard value; you rarely change it.</p>
+</li>
+<li>
+<p><strong><code>halo_width</code></strong> - each brick keeps a ring of “ghost” cells copied from its
+neighbors so the solver can compute gradients at brick edges without
+reaching across memory. This is the width of that ring in cells. It must be
+<strong>at least 4</strong> for the default cubic interpolation. Use <code>4</code> unless you know
+you need more.</p>
+</li>
+<li>
+<p><strong><code>base_bricks</code></strong> - how many bricks make up the <strong>coarsest</strong> level, in x
+and y (the z of this <code>VoxelDims</code> is unused - vertical layout is the axis’s
+job). This sets the domain’s width. The domain is
+<code>base_bricks * brick_size * (coarsest cell size)</code> meters on a side.</p>
+<blockquote>
+<p><code>base_bricks = {16, 16}</code>, <code>brick_size = 8</code>, coarsest cell 800 m -&gt;
+<code>16 * 8 * 800 = 102400</code> m = <strong>102.4 km</strong> across. Matches the example’s
+<code>origin</code> of <code>-51200</code> (half of 102.4 km), which centers the domain on the
+world origin.</p>
+</blockquote>
+</li>
+<li>
+<p><strong><code>origin</code></strong> - the world position of the domain’s <strong>low corner</strong> (the
+minimum x, minimum y), in meters. Set it to <code>-(domain size)/2</code> on each axis
+to center the domain on <code>(0,0)</code>, which is the usual choice.</p>
+</li>
+</ul>
+<h3 id="sizing-the-horizontal-domain"><a class="header" href="#sizing-the-horizontal-domain">Sizing the horizontal domain</a></h3>
+<p>Two quantities fall out of the fields above; keep them in mind:</p>
+<ul>
+<li><strong>Finest cell</strong> = <code>dx_finest</code>. Your resolution.</li>
+<li><strong>Domain width</strong> = <code>base_bricks.x * brick_size * dx_finest * 2^(levels-1)</code>.</li>
+</ul>
+<p>Make the domain a few times bigger than your storm so it has room to grow and
+move, but not so big you waste coarse cells on empty sky. If the storm will
+travel, either make the domain generous or park the storm (see
+<a href="#wind-shear-and-rotating-storms">shear</a>).</p>
+<h2 id="vertical-layout-axisconfig"><a class="header" href="#vertical-layout-axisconfig">Vertical layout: <code>AxisConfig</code></a></h2>
+<p>Height needs different treatment from the horizontal. Near the ground, where
+the action is, you want thin layers; high up, where the air is smooth, thick
+layers are fine. So the vertical axis is <strong>stretched</strong>: layers start thin and
+grow with height.</p>
+<pre><code class="language-cpp">AxisConfig axis{};
+axis.k_levels   = 28;      // number of vertical layers
+axis.dz_surface = 200.0;   // thickness of the lowest layer, meters
+axis.dz_top     = 700.0;   // thickness of the top layer, meters
+axis.max_growth = 0.10;    // max 10% thickness change per layer
+</code></pre>
+<ul>
+<li><strong><code>k_levels</code></strong> - how many vertical layers. More layers = taller and/or
+finer domain, but more cost.</li>
+<li><strong><code>dz_surface</code></strong> - thickness of the lowest layer, meters. Thin here (100-
+250 m) to resolve the boundary layer and cloud base well.</li>
+<li><strong><code>dz_top</code></strong> - thickness of the top layer, meters. Thicker (500-800 m) up
+where the air is smooth.</li>
+<li><strong><code>max_growth</code></strong> - the biggest fractional change in thickness from one
+layer to the next (e.g. <code>0.10</code> = at most 10% thicker each step up). This
+keeps the stretch gentle; abrupt jumps in layer thickness hurt accuracy.</li>
+</ul>
+<p>The <strong>total domain height</strong> is the sum of all the (growing) layer
+thicknesses. With 28 layers stretching from 200 m to 700 m, that comes out to
+roughly 11-12 km - enough to contain a storm whose top (the EL from
+<a href="#storm-fuel-cape-cin-and-the-key-levels">CAPE</a>) is around 12 km.</p>
+<blockquote>
+<p><strong>Make sure your domain top clears the EL.</strong> If <code>analyze()</code> reports an EL
+of 12 km and your axis only reaches 9 km, the storm hits the ceiling and
+its top is clipped. Add layers or thicken them. The <code>SimStatusData</code> you get
+back in <code>SimReady</code> reports <code>domain_top</code> so you can check.</p>
+</blockquote>
+<h3 id="custom-vertical-edges"><a class="header" href="#custom-vertical-edges">Custom vertical edges</a></h3>
+<p>If you need exact layer boundaries instead of a smooth stretch, use
+<code>create_sim_edges</code> and pass the explicit edge heights (strictly increasing,
+<code>k_levels + 1</code> of them) in place of an <code>AxisConfig</code>. The stretched
+<code>AxisConfig</code> covers almost every case; reach for edges only when you have a
+specific vertical structure to match.</p>
+<h2 id="putting-it-together-create_sim"><a class="header" href="#putting-it-together-create_sim">Putting it together: <code>create_sim</code></a></h2>
+<p>With both structs and a sounding, build the world:</p>
+<pre><code class="language-cpp">client-&gt;create_sim(config, axis, std::move(sounding), options);
+Box&lt;SimEvent&gt; ready = pump_until(*client, SimEventKind::SimReady);
+if (ready-&gt;kind() == SimEventKind::Error) {
+    std::printf("bad config: %s\n",
+                std::string(ready-&gt;error_message()).c_str());
+    return;
+}
+SimStatusData s = ready-&gt;status();
+std::printf("domain %.1f x %.1f km, top %.0f m, dt %.2f s\n",
+            s.domain.x/1000, s.domain.y/1000, s.domain_top, s.dt);
+</code></pre>
+<p><code>create_sim</code> <strong>takes ownership of the sounding</strong> (note the <code>std::move</code>) - it
+becomes the world’s base state on the worker. A <code>SimReady</code> event follows on
+success, carrying a <code>SimStatusData</code> snapshot (domain size, top, time step,
+finest cell size). A bad config comes back as an <code>Error</code> - never a crash.</p>
+<p>The <code>options</code> argument (<code>SimOptions</code>) tunes the solver itself - time step,
+sound speed, boundaries. It has its own page,
+<a href="#options-and-keeping-it-stable">Options and keeping it stable</a>; for now use
+<code>default_sim_options()</code> with the two acoustic tweaks the examples show.</p>
+<h2 id="a-worked-size-the-quickstart-domain"><a class="header" href="#a-worked-size-the-quickstart-domain">A worked size: the quickstart domain</a></h2>
+<p>The smallest useful world, from <code>quickstart.cpp</code>:</p>
+<pre><code class="language-cpp">config.dx_finest = 200.0;   config.levels = 1;   // uniform 200 m
+config.brick_size = 8;      config.halo_width = 4;
+config.base_bricks = VoxelDims{8, 8, 0};
+config.origin = Vec2{-6400.0, -6400.0};
+// -&gt; 8 * 8 * 200 = 12800 m = 12.8 km box, centered on origin.
+
+axis.k_levels = 24;  axis.dz_surface = 200.0;  axis.dz_top = 600.0;
+axis.max_growth = 0.10;
+</code></pre>
+<p>A 12.8 km, uniform 200 m box, 24 layers tall. Small enough to step quickly
+while you learn, big enough to hold one storm.</p>
+<h2 id="takeaways-8"><a class="header" href="#takeaways-8">Takeaways</a></h2>
+<ul>
+<li>The engine solves on a 3D grid; <strong>smaller cells cost much more</strong>, so refine
+only where the storm is.</li>
+<li><strong><code>GridConfig</code></strong> sets the horizontal grid: <code>dx_finest</code> (resolution),
+<code>levels</code> (1 = uniform, more = adaptive quadtree), <code>brick_size</code> (8),
+<code>halo_width</code> (&gt;= 4), <code>base_bricks</code> and <code>origin</code> (domain size and position).
+Aim for ~200 m finest cells.</li>
+<li><strong><code>AxisConfig</code></strong> sets a <strong>stretched</strong> vertical axis: thin layers at the
+surface (<code>dz_surface</code>) growing to thick ones at the top (<code>dz_top</code>), gently
+(<code>max_growth</code>), over <code>k_levels</code> layers. <strong>Make the top clear the storm’s
+EL.</strong></li>
+<li><code>create_sim</code> builds the world, <strong>takes the sounding</strong>, and answers with
+<code>SimReady</code> (or <code>Error</code>). Use <code>create_sim_edges</code> for exact vertical
+boundaries.</li>
+</ul>
+<p>Next: putting weather <em>into</em> that world - scenarios.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="starting-the-weather-scenarios"><a class="header" href="#starting-the-weather-scenarios">Starting the weather: scenarios</a></h1>
+<p>A fresh simulation is just the calm base atmosphere from your sounding -
+nothing is happening. A <strong>scenario</strong> is how you make something happen. It is
+a list of edits to the air: a warm bubble here, a moisture source there, a
+pool of cold air over there. You author it on the game thread, hand it over
+with <code>install_scenario</code>, and the worker applies it.</p>
+<p>There are three kinds of edit, in order of how often you reach for them:</p>
+<ol>
+<li><strong>Seeds</strong> - one-shot pushes that kick off weather (the storm trigger).</li>
+<li><strong>Feeds</strong> - persistent forcing that keeps pushing over time.</li>
+<li><strong>Air masses</strong> - painting a region with a <em>different</em> sounding’s air.</li>
+</ol>
+<h2 id="the-scenario-handle"><a class="header" href="#the-scenario-handle">The <code>Scenario</code> handle</a></h2>
+<p>Like a sounding, a scenario is cheap, synchronous, pure data. Build it, fill
+it, install it:</p>
+<pre><code class="language-cpp">Box&lt;Scenario&gt; scenario = new_scenario();
+scenario-&gt;add_seed_ellipsoid(Field::Theta, center, radii, 3.0f);
+scenario-&gt;add_seed_ellipsoid(Field::Vapor, center, radii, 0.003f);
+client-&gt;install_scenario(std::move(scenario));
+pump_until(*client, SimEventKind::Status);   // wait for the install ack
+</code></pre>
+<p><code>install_scenario</code> <strong>takes ownership</strong> (the <code>std::move</code>) and answers with a
+<code>Status</code> event when the worker has applied it. From <a href="#heat-and-potential-temperature">Heat</a>
+and <a href="#water-in-the-air">Water</a>, remember that all amplitudes are
+<strong>perturbations</strong> - offsets from the base sounding - so <code>3.0f</code> on <code>Theta</code>
+means “3 K warmer than the background right here.”</p>
+<h2 id="seeds-the-one-shot-trigger"><a class="header" href="#seeds-the-one-shot-trigger">Seeds: the one-shot trigger</a></h2>
+<p>A <strong>seed</strong> writes a perturbation into a region <strong>once</strong>, at install time,
+then leaves it alone. This is almost always how you start a storm: a small
+warm, moist bubble that provides the initial lift past the cap
+(<a href="#why-air-rises-stability-and-convection">convection</a>).</p>
+<p>Three shapes:</p>
+<h3 id="ellipsoid---a-soft-blob-the-usual-one"><a class="header" href="#ellipsoid---a-soft-blob-the-usual-one">Ellipsoid - a soft blob (the usual one)</a></h3>
+<pre><code class="language-cpp">Vec3 center{0.0, 0.0, 1000.0};   // x=east, y=north, z=up (meters)
+Vec3 radii {2000.0, 2000.0, 1000.0};   // half-widths in x, y, z
+scenario-&gt;add_seed_ellipsoid(Field::Theta, center, radii, 3.0f);
+</code></pre>
+<p>A smooth ellipsoidal bump centered at <code>center</code>, with half-widths <code>radii</code>,
+peaking at <code>amplitude</code> in the middle and fading to zero at the edge. The
+classic storm trigger is a <code>+3 K</code> theta blob plus a <code>+0.003 kg/kg</code> vapor blob
+in the same spot, a couple of km wide, centered around 1 km up. Warm <strong>and</strong>
+moist is the point - the warmth lifts it, the extra vapor feeds the
+condensation once it rises.</p>
+<h3 id="box---a-soft-edged-rectangular-region"><a class="header" href="#box---a-soft-edged-rectangular-region">Box - a soft-edged rectangular region</a></h3>
+<pre><code class="language-cpp">scenario-&gt;add_seed_box(Field::Vapor, min, max, /*softness=*/500.0, 0.002f);
+</code></pre>
+<p>A <code>Vec3</code> <code>min</code> and <code>max</code> corner define the box; <code>softness</code> (meters) is how
+far the edge fades from full amplitude to zero, so you can make a crisp block
+or a gentle one. Good for a broad moist layer or a slab of cold air.</p>
+<h3 id="path---a-tube-along-a-line"><a class="header" href="#path---a-tube-along-a-line">Path - a tube along a line</a></h3>
+<pre><code class="language-cpp">PathPoint pts[] = {
+    {Vec3{-5000, 0, 500}, 800.0},   // position, tube radius (meters)
+    {Vec3{ 5000, 0, 500}, 800.0},
+};
+scenario-&gt;add_seed_path(Field::Theta, Slice&lt;const PathPoint&gt;{pts, 2},
+                        /*softness=*/300.0, -2.0f);
+</code></pre>
+<p>A tube of the given radius swept along a poly-line of <code>PathPoint</code>s. Handy for
+a line of forcing - for instance a cold <code>-2 K</code> tube to mimic a gust front or
+an outflow boundary that fires a line of storms.</p>
+<blockquote>
+<p><strong>Seeds are idempotent.</strong> Installing the same seed again just re-writes the
+same bump. This matters after loading a snapshot (which clears the
+scenario) - reseeding a loaded grid is safe.</p>
+</blockquote>
+<h2 id="feeds-persistent-forcing-over-time"><a class="header" href="#feeds-persistent-forcing-over-time">Feeds: persistent forcing over time</a></h2>
+<p>A <strong>feed</strong> keeps acting every step, within a time window, instead of writing
+once. Use it when you want the atmosphere continuously pushed - a warm updraft
+region that stays warm, a moisture source that keeps pumping vapor, a
+mountain-like heat source. Two effects, both on an ellipsoid region:</p>
+<h3 id="nudge---hold-a-region-toward-a-target"><a class="header" href="#nudge---hold-a-region-toward-a-target">Nudge - hold a region toward a target</a></h3>
+<pre><code class="language-cpp">// Gently hold this blob 2 K warmer than ambient, forever.
+scenario-&gt;add_feed_nudge_ellipsoid(
+    Field::Theta, center, radii,
+    /*target=*/2.0f, /*rate=*/0.01f, envelope_always());
+</code></pre>
+<p>Each step the field is pulled toward <code>ambient + target</code> at <code>rate</code> (per
+second - <code>0.01</code> means it closes about 1% of the gap each second, a soft
+hold). Nudging is stable and gentle; it <em>maintains</em> a condition rather than
+injecting unbounded energy.</p>
+<h3 id="source---inject-at-a-constant-rate"><a class="header" href="#source---inject-at-a-constant-rate">Source - inject at a constant rate</a></h3>
+<pre><code class="language-cpp">// Pump vapor into this blob at a fixed rate while active.
+scenario-&gt;add_feed_source_ellipsoid(
+    Field::Vapor, center, radii,
+    /*rate=*/0.0002f, envelope_always());
+</code></pre>
+<p>Adds <code>rate</code> field-units per second to the region regardless of its current
+value. More aggressive than a nudge - use it for genuine sources (a
+moisture plume) and watch that you do not run away.</p>
+<h3 id="the-envelope-when-a-feed-is-active"><a class="header" href="#the-envelope-when-a-feed-is-active">The envelope: when a feed is active</a></h3>
+<p>Every feed carries an <strong><code>Envelope</code></strong> that switches it on and off smoothly
+over simulation time (seconds):</p>
+<pre><code class="language-cpp">Envelope env{};
+env.start   = 0.0;     // turn on at t = 0 s
+env.end     = 600.0;   // turn off at t = 600 s
+env.ramp_in = 30.0;    // fade in over the first 30 s
+env.ramp_out= 60.0;    // fade out over the last 60 s
+</code></pre>
+<p>The ramps avoid a jolt from switching forcing on or off instantly (sudden
+changes make noise and can destabilize the solver). For a feed that is simply
+always on at full strength, pass <strong><code>envelope_always()</code></strong>.</p>
+<p>Seeds do not take an envelope - they are instantaneous by nature.</p>
+<h2 id="air-masses-painting-with-another-sounding"><a class="header" href="#air-masses-painting-with-another-sounding">Air masses: painting with another sounding</a></h2>
+<p>The most powerful edit. An <strong>air mass</strong> stamps a whole <em>region</em> with the air
+from a <strong>different sounding</strong> - a different temperature, moisture, and
+optionally wind profile. This is how you build fronts and boundaries: a cold,
+dry pool crashing into warm moist air; a moist tongue feeding a dry
+environment; the classic ingredients that make storms fire along a line.</p>
+<pre><code class="language-cpp">Box&lt;Sounding&gt; cold = sounding_quiet();   // a stable, cool air mass
+// ... optionally tweak `cold` to be colder/drier ...
+
+scenario-&gt;add_air_mass_box(
+    *cold,
+    Vec3{-50000, -50000, 0}, Vec3{0, 50000, 8000},  // the region
+    /*softness=*/2000.0,
+    /*with_winds=*/true,       // also stamp the cold sounding's wind
+    /*nudge_rate=*/0.0f,       // 0 = initial condition only
+    envelope_always());
+</code></pre>
+<p>Key parameters:</p>
+<ul>
+<li><strong>The sounding</strong> is the air you paint in. It is resolved against the live
+sim <strong>at install time</strong> - the worker samples that sounding into the region.</li>
+<li><strong><code>with_winds</code></strong> - stamp the source sounding’s wind too, or leave the
+existing wind. A cold pool usually brings its own (calm) wind.</li>
+<li><strong><code>nudge_rate</code></strong> - the crucial switch:
+<ul>
+<li><code>0.0f</code> paints the air <strong>once</strong>, as an initial condition, then lets the
+simulation evolve it freely (the front will move and mix).</li>
+<li><code>&gt; 0.0f</code> also adds nudges that <strong>hold</strong> the region as that air over time
+(a persistent, replenished air mass - e.g. a cold source that keeps
+feeding outflow). The <code>envelope</code> then controls that hold’s timing.</li>
+</ul>
+</li>
+</ul>
+<p>There is an ellipsoid version too (<code>add_air_mass_ellipsoid</code>) with the same
+parameters and a <code>radii</code> instead of box corners.</p>
+<h2 id="clear-and-rebuilding"><a class="header" href="#clear-and-rebuilding"><code>clear()</code> and rebuilding</a></h2>
+<p><code>scenario-&gt;clear()</code> drops all seeds, feeds, and air masses so you can reuse
+the handle. In practice you usually build a fresh scenario each time you want
+to change the weather and install it; installing a new scenario applies its
+edits on top of the current sim state (seeds write their bumps, feeds begin
+acting).</p>
+<h2 id="choosing-the-right-tool"><a class="header" href="#choosing-the-right-tool">Choosing the right tool</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>You want to…</th><th>Use</th></tr>
+</thead>
+<tbody>
+<tr><td>Fire a single storm now</td><td><strong>Seed</strong> an ellipsoid (warm + moist)</td></tr>
+<tr><td>Fire a line of storms</td><td><strong>Seed</strong> a path (cold tube) or an air-mass boundary</td></tr>
+<tr><td>Keep a region warm/moist over time</td><td><strong>Feed</strong> (nudge to hold, source to pump)</td></tr>
+<tr><td>Build a front or cold pool</td><td><strong>Air mass</strong> (<code>nudge_rate = 0</code> to release it)</td></tr>
+<tr><td>Maintain a persistent boundary</td><td><strong>Air mass</strong> with <code>nudge_rate &gt; 0</code></td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="takeaways-9"><a class="header" href="#takeaways-9">Takeaways</a></h2>
+<ul>
+<li>A <strong><code>Scenario</code></strong> is a list of edits to the air, authored cheaply on the
+game thread and applied by <code>install_scenario</code> (answered with <code>Status</code>).</li>
+<li><strong>Seeds</strong> write a perturbation <strong>once</strong> - the standard storm trigger is a
+small warm (<code>Theta +3 K</code>) and moist (<code>Vapor +0.003</code>) ellipsoid. Shapes:
+ellipsoid, box, path.</li>
+<li><strong>Feeds</strong> force a region <strong>over time</strong> within an <strong><code>Envelope</code></strong> - <code>nudge</code>
+to hold toward a target, <code>source</code> to inject at a rate. Use
+<code>envelope_always()</code> for always-on.</li>
+<li><strong>Air masses</strong> paint a region with a <strong>different sounding’s</strong> air -
+fronts, cold pools, moist tongues. <code>nudge_rate = 0</code> paints once;
+<code>&gt; 0</code> also holds it.</li>
+</ul>
+<p>Next: keeping fine resolution locked on the storm as it grows and moves - the
+adaptive grid.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="following-the-storm-the-adaptive-grid"><a class="header" href="#following-the-storm-the-adaptive-grid">Following the storm: the adaptive grid</a></h1>
+<p>A storm is tiny compared to the sky around it. Simulating your whole domain
+at storm-resolving 200 m cells would waste almost all of that work on empty,
+calm air. The <strong>regridder</strong> is the engine’s answer: it keeps fine cells
+<em>only where the storm is</em> and lets everywhere else stay coarse - and it moves
+that fine patch as the storm grows and drifts. This is what “adaptive
+resolution” means, and it is the feature that makes large, detailed weather
+affordable in a game.</p>
+<p>You only need this if your <code>GridConfig</code> has <code>levels &gt; 1</code>. With <code>levels = 1</code>
+the grid is uniform and there is nothing to adapt.</p>
+<h2 id="the-idea-refine-where-it-matters-coarsen-where-it-does-not"><a class="header" href="#the-idea-refine-where-it-matters-coarsen-where-it-does-not">The idea: refine where it matters, coarsen where it does not</a></h2>
+<p>Recall from <a href="#building-a-world-grid-and-vertical-axis">Building a world</a> that with <code>levels &gt; 1</code> the grid can
+sit at a coarse cell size and <strong>refine</strong> toward <code>dx_finest</code> in patches. The
+regridder decides, every so often, which patches deserve refinement:</p>
+<ul>
+<li>Where the air is doing something interesting (a strong updraft, warm buoyant
+air, dense cloud, rotation), it <strong>splits</strong> coarse bricks into finer ones.</li>
+<li>Where things have gone quiet, it <strong>merges</strong> fine bricks back into coarse
+ones to reclaim the cost.</li>
+</ul>
+<p>The result is a grid that hugs the storm - fine over the updraft, coarse over
+the calm - and follows it around the domain. You run it periodically during
+<code>advance</code>, and it reports what it did.</p>
+<h2 id="running-it-advances-second-argument"><a class="header" href="#running-it-advances-second-argument">Running it: <code>advance</code>’s second argument</a></h2>
+<p>The regridder runs <em>inside</em> <code>advance</code>, on a cadence you set:</p>
+<pre><code class="language-cpp">// Advance 5 steps, and run the regridder every 5 steps (so once here).
+client-&gt;advance(/*steps=*/5, /*regrid_every=*/5);
+</code></pre>
+<ul>
+<li><code>regrid_every = 0</code> <strong>disables</strong> regridding for that call (pure dynamics).</li>
+<li><code>regrid_every = N</code> runs the regridder every N base steps during the
+advance. Each run emits a <strong><code>Regridded</code></strong> event; the whole advance ends
+with one <strong><code>Advanced</code></strong> event.</li>
+</ul>
+<p>Regridding is not free, so you do not do it every single step. Every few
+steps is plenty - the storm does not teleport between ticks.</p>
+<p>Before it can run, you must install a configuration with <code>set_regridder</code>.</p>
+<h2 id="configuring-it-new_regridder-and-tiers"><a class="header" href="#configuring-it-new_regridder-and-tiers">Configuring it: <code>new_regridder</code> and tiers</a></h2>
+<p>A regridder is a <strong>ladder of tiers</strong>. Each tier grants one more level of
+refinement, and says <em>what signal</em> justifies refining to that level. You
+build it, add tiers finest-last, and hand it over:</p>
+<pre><code class="language-cpp">Box&lt;Regridder&gt; regridder = new_regridder(/*hold_rounds=*/3, /*min_age_rounds=*/3);
+
+TierTrigger storm_birth{};        // tier 0 -&gt; grants level 1
+storm_birth.theta_above      = 0.8f;      // refine where |theta'| &gt;= 0.8 K
+storm_birth.w_above          = 1.5f;      // ...or |w| &gt;= 1.5 m/s
+storm_birth.condensate_above = 1.0e-4f;   // ...or cloud+rain &gt;= 1e-4 kg/kg
+storm_birth.zeta_above       = 1.0e30f;   // vorticity: effectively disabled
+storm_birth.pad_bricks       = 1;         // refine 1 brick beyond the signal
+storm_birth.max_bricks       = 320;       // cap this tier's fine bricks
+regridder-&gt;add_tier(storm_birth);
+
+TierTrigger storm_core{};         // tier 1 -&gt; grants level 2 (finest)
+storm_core.theta_above      = 1.0e30f;    // disabled
+storm_core.w_above          = 5.0f;       // only strong updrafts
+storm_core.condensate_above = 3.0e-3f;    // ...or heavy condensate
+storm_core.zeta_above       = 5.0e-3f;    // ...or real rotation
+storm_core.pad_bricks       = 1;
+storm_core.max_bricks       = 256;
+regridder-&gt;add_tier(storm_core);
+
+client-&gt;set_regridder(std::move(regridder));
+pump_until(*client, SimEventKind::Status);   // install ack
+</code></pre>
+<h3 id="the-tier-ladder"><a class="header" href="#the-tier-ladder">The tier ladder</a></h3>
+<ul>
+<li>The <strong>first tier you add grants level 1</strong>, the second grants level 2, and
+so on. So add them from <strong>coarsest trigger to finest</strong>. Level 0 (the base
+coarse grid) is always present and never capped.</li>
+<li>A tier fires wherever <strong>any</strong> of its enabled signals crosses its threshold.
+A cell that meets a finer tier’s trigger gets refined all the way to that
+tier’s level.</li>
+<li>The pattern above is the common one: a <strong>loose</strong> first tier catches the
+whole storm and its surroundings at medium resolution; a <strong>strict</strong> second
+tier drops the very finest cells only on the violent core (strong updraft,
+heavy condensate, real rotation).</li>
+</ul>
+<h3 id="tiertrigger-signals"><a class="header" href="#tiertrigger-signals"><code>TierTrigger</code> signals</a></h3>
+<p>Each is a threshold; set a signal to a huge value (like <code>1e30f</code>) to <strong>disable
+it</strong>. All map to concepts from Part I:</p>
+<ul>
+<li><strong><code>theta_above</code></strong> (K) - fire where the potential-temperature perturbation
+<code>|theta'|</code> is at least this. Marks warm buoyant air. See
+<a href="#heat-and-potential-temperature">Heat</a>.</li>
+<li><strong><code>w_above</code></strong> (m/s) - fire where the updraft/downdraft <code>|w|</code> is at least
+this. Marks active convection. This is the workhorse trigger.</li>
+<li><strong><code>condensate_above</code></strong> (kg/kg) - fire where cloud+rain water is at least
+this. Marks the visible storm body. See <a href="#water-in-the-air">Water</a>.</li>
+<li><strong><code>zeta_above</code></strong> (1/s) - fire where <strong>vorticity</strong> (local spin) is at least
+this. Vorticity is how fast the air is rotating; a threshold here refines
+the rotating core of a supercell - the mesocyclone from
+<a href="#wind-shear-and-rotating-storms">shear</a>. Values around <code>5e-3</code> 1/s mark real rotation.</li>
+</ul>
+<h3 id="pad_bricks-and-max_bricks"><a class="header" href="#pad_bricks-and-max_bricks"><code>pad_bricks</code> and <code>max_bricks</code></a></h3>
+<ul>
+<li><strong><code>pad_bricks</code></strong> - refine this many bricks <em>beyond</em> where the signal
+actually is, as a margin. Because the storm moves between regrids, a pad of
+1-2 bricks keeps it from outrunning its fine grid before the next run. Too
+small and the storm’s leading edge crosses onto coarse cells; too big and
+you waste fine cells on empty air.</li>
+<li><strong><code>max_bricks</code></strong> - a hard cap on how many fine bricks this tier may use
+(<code>0</code> = uncapped). This is your <strong>cost ceiling</strong>: it bounds the worst-case
+work per step even if the storm grows huge. If the demand exceeds the cap,
+the regridder demotes the least-important regions to stay under budget.</li>
+</ul>
+<h2 id="hysteresis-hold_rounds-and-min_age_rounds"><a class="header" href="#hysteresis-hold_rounds-and-min_age_rounds">Hysteresis: <code>hold_rounds</code> and <code>min_age_rounds</code></a></h2>
+<p>If the grid refined and coarsened the instant a signal wobbled across a
+threshold, it would “flicker” - constantly splitting and merging the same
+bricks, which is wasteful and can jitter the solution. <code>new_regridder</code> takes
+two hysteresis counts (in regrid rounds) to damp this:</p>
+<ul>
+<li><strong><code>hold_rounds</code></strong> - after a brick’s signal drops below threshold, it must
+stay quiet this many rounds before it is allowed to coarsen. Prevents a
+briefly-calm patch from de-refining and then immediately needing to
+refine again.</li>
+<li><strong><code>min_age_rounds</code></strong> - a freshly refined brick must live at least this many
+rounds before it may coarsen. Prevents split-then-immediately-merge churn.</li>
+</ul>
+<p><code>3</code> and <code>3</code> (as in the example) are sensible starting values. Raise them if
+you see the grid thrashing; lower them if the grid is too slow to release
+resolution behind a fast-moving storm.</p>
+<h2 id="reading-regridded-did-it-keep-up"><a class="header" href="#reading-regridded-did-it-keep-up">Reading <code>Regridded</code>: did it keep up?</a></h2>
+<p>Each regrid emits a <code>Regridded</code> event with a <code>RegridSummary</code>. The field to
+watch is <strong><code>min_margin</code></strong>:</p>
+<pre><code class="language-cpp">case SimEventKind::Regridded: {
+    RegridSummary r = event-&gt;regrid_summary();
+    if (r.min_margin == 0) {
+        std::printf("warning: storm reached the edge of its fine grid!\n");
+    }
+    break;
+}
+</code></pre>
+<ul>
+<li><strong><code>min_margin</code></strong> - the distance (in finest bricks) from the nearest signal
+to the boundary of its fine region. It is your early-warning gauge:
+<ul>
+<li><strong><code>-1</code></strong> - nothing triggered at all (no storm, or thresholds too high).</li>
+<li><strong>large positive</strong> - comfortable; the fine grid surrounds the storm with
+room to spare.</li>
+<li><strong>small positive</strong> - the storm is nearing the edge of its fine patch.</li>
+<li><strong><code>0</code></strong> - <strong>failure</strong>: the storm has reached (and is spilling past) its
+fine grid. Its leading edge is now on coarse cells and detail is being
+lost. Fix by increasing <code>pad_bricks</code>, regridding more often (smaller
+<code>regrid_every</code>), or - if it keeps happening because the storm is fast -
+<a href="#wind-shear-and-rotating-storms">parking the storm</a>.</li>
+</ul>
+</li>
+</ul>
+<p>The summary also reports <strong><code>splits</code></strong> (leaves refined), <strong><code>merges</code></strong> (leaves
+coarsened), and <strong><code>demoted_regions</code></strong> (patches the <code>max_bricks</code> budget forced
+back to coarse). Rising <code>demoted_regions</code> means you are hitting your cost cap</p>
+<ul>
+<li>raise <code>max_bricks</code> if you can afford it, or accept the coarser edges.</li>
+</ul>
+<h2 id="when-you-do-not-need-a-regridder"><a class="header" href="#when-you-do-not-need-a-regridder">When you do not need a regridder</a></h2>
+<ul>
+<li><strong>Uniform grid</strong> (<code>levels = 1</code>): there is nothing to adapt; do not set one.</li>
+<li><strong>Small fixed domains</strong> where you can afford fine cells everywhere: simpler
+to run uniform.</li>
+<li><strong>Prototyping</strong>: get the storm right first with <code>regrid_every = 0</code>, then
+add adaptation for performance.</li>
+</ul>
+<h2 id="takeaways-10"><a class="header" href="#takeaways-10">Takeaways</a></h2>
+<ul>
+<li>The <strong>regridder</strong> keeps fine cells on the storm and coarse cells
+elsewhere, and follows the storm - the core of affordable large-domain
+weather. Only relevant when <code>levels &gt; 1</code>.</li>
+<li>Configure a <strong>ladder of tiers</strong> with <code>new_regridder</code> + <code>add_tier</code>
+(finest-last). Each tier grants one level and fires on any enabled signal:
+<code>theta_above</code>, <code>w_above</code>, <code>condensate_above</code>, <code>zeta_above</code>.</li>
+<li><strong><code>pad_bricks</code></strong> gives the moving storm margin; <strong><code>max_bricks</code></strong> caps cost.</li>
+<li><strong>Hysteresis</strong> (<code>hold_rounds</code>, <code>min_age_rounds</code>) stops the grid from
+flickering; <code>3</code>/<code>3</code> is a good start.</li>
+<li>Run it via <code>advance(steps, regrid_every)</code>; watch <strong><code>min_margin</code></strong> in the
+<code>Regridded</code> event - <strong><code>0</code> means the storm outran its fine grid.</strong></li>
+</ul>
+<p>Next: pulling the simulated weather out to render and inspect it.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="getting-data-back-out"><a class="header" href="#getting-data-back-out">Getting data back out</a></h1>
+<p>A running simulation is useless until you can see it. This page covers every
+way to read the weather back: <strong>grabs</strong> (dense 3D volumes for the renderer),
+<strong>probes</strong> (a full weather report for one column), and <strong>queries</strong> (cheap
+scalars and the precipitation map). All of them come back as events you drain
+from <code>poll()</code>.</p>
+<p>Pick the lightest tool that answers your question. A grab copies a whole
+volume every frame; a query copies a handful of numbers. Do not grab when a
+query will do.</p>
+<h2 id="grabs-dense-voxel-volumes-for-rendering"><a class="header" href="#grabs-dense-voxel-volumes-for-rendering">Grabs: dense voxel volumes for rendering</a></h2>
+<p>A <strong>grab</strong> samples the simulation onto a regular 3D voxel box and hands you
+the raw floats, ready to upload as a 3D texture. This is how you render
+clouds and rain. Two flavors:</p>
+<ul>
+<li><strong><code>grab_presets</code></strong> - render-ready <strong>derived</strong> channels. Prefer this for
+visuals.</li>
+<li><strong><code>grab_fields</code></strong> - the <strong>raw</strong> prognostic fields (<code>Theta</code>, <code>Vapor</code>, <code>W</code>,
+…). Use for analysis, debug views, or custom shading.</li>
+</ul>
+<h3 id="the-viewbox-what-window-to-sample"><a class="header" href="#the-viewbox-what-window-to-sample">The <code>ViewBox</code>: what window to sample</a></h3>
+<p>Both grabs take a <code>ViewBox</code> describing the horizontal window and the output
+resolution:</p>
+<pre><code class="language-cpp">ViewBox view{};
+view.min = Vec2{-51200.0, -51200.0};      // low corner, world meters
+view.max = Vec2{ 51200.0,  51200.0};      // high corner, world meters
+view.resolution = VoxelDims{128, 128, 48};  // output voxels x, y, z
+</code></pre>
+<ul>
+<li><code>min</code> / <code>max</code> are the horizontal world box to sample (they need not match
+the whole domain - zoom in on the storm if you like).</li>
+<li><code>resolution</code> is the output voxel count. The <strong>z voxels are uniform slices
+over the full domain height</strong>, regardless of the stretched simulation axis
+<ul>
+<li>so the grab is a plain box you can drop straight into a 3D texture.</li>
+</ul>
+</li>
+</ul>
+<p>Note the grab resolution is <strong>independent of the simulation grid.</strong> You can
+render a 128x128x48 texture from a domain with millions of fine cells, or
+sample a small area at high resolution. Build the <code>ViewBox</code> once and reuse it
+every frame.</p>
+<h3 id="the-preset-channels"><a class="header" href="#the-preset-channels">The preset channels</a></h3>
+<p><code>grab_presets</code> takes a list of <code>ChannelPreset</code> values and returns one channel
+per preset, in order:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th><code>ChannelPreset</code></th><th>What it is</th><th>Use for</th></tr>
+</thead>
+<tbody>
+<tr><td><code>Cloud</code></td><td>cloud-water density proxy</td><td>rendering cloud</td></tr>
+<tr><td><code>Rain</code></td><td>rain-water density proxy</td><td>rendering rain / precipitation shafts</td></tr>
+<tr><td><code>Condensate</code></td><td>cloud + rain together</td><td>a single “all visible water” volume</td></tr>
+<tr><td><code>Temperature</code></td><td>physical temperature, K</td><td>thermal/debug shading</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-cpp">ChannelPreset presets[] = {ChannelPreset::Cloud, ChannelPreset::Rain};
+client-&gt;grab_presets(view, Slice&lt;const ChannelPreset&gt;{presets, 2});
+</code></pre>
+<h3 id="receiving-a-grab-and-the-recycle-loop"><a class="header" href="#receiving-a-grab-and-the-recycle-loop">Receiving a grab and the recycle loop</a></h3>
+<p>A grab answers with a <code>Grabbed</code> event carrying a <code>ViewGrab</code> buffer. You
+<strong>move it out</strong> with <code>take_grab()</code>, read its channels, then <strong>recycle</strong> the
+spent buffer so the next grab of the same shape reuses the allocation:</p>
+<pre><code class="language-cpp">case SimEventKind::Grabbed: {
+    Box&lt;ViewGrab&gt; grab = event-&gt;take_grab();
+
+    VoxelDims d = grab-&gt;dims();                 // voxel counts
+    Vec3 origin = grab-&gt;origin();               // world corner of the volume
+    Vec3 vsize  = grab-&gt;voxel_size();           // world size of one voxel
+    double when = grab-&gt;grab_time();            // sim time it was sampled
+
+    for (uint32_t c = 0; c &lt; grab-&gt;channel_count(); ++c) {
+        Slice&lt;const float&gt; ch = grab-&gt;channel(c);  // flat volume, nx*ny*nz
+        // ... upload ch.data(), ch.size() as a 3D texture slice ...
+    }
+
+    client-&gt;recycle(std::move(grab));   // hand the buffer back - no per-frame alloc
+    break;
+}
+</code></pre>
+<p>Two important details:</p>
+<ul>
+<li><strong>Channel layout is z-slice major</strong>: the flat array is <code>nx*ny*nz</code> floats,
+with x varying fastest, then y, then z. Index <code>(x,y,z)</code> is at
+<code>x + y*nx + z*nx*ny</code>.</li>
+<li><strong>Always <code>recycle</code></strong> the buffer after uploading. The worker keeps a free
+list of buffers; recycling one lets the next same-shaped grab reuse it
+instead of allocating. In a per-frame loop this is the difference between
+zero and constant allocation churn.</li>
+</ul>
+<h3 id="metadata-to-place-the-volume-in-the-world"><a class="header" href="#metadata-to-place-the-volume-in-the-world">Metadata to place the volume in the world</a></h3>
+<p><code>origin()</code> and <code>voxel_size()</code> tell your renderer exactly where the volume
+sits and how big each voxel is in world meters, so you can position the 3D
+texture correctly. <code>grab_time()</code> is the simulation time (seconds) the grab
+was sampled - useful because the grab you receive this frame may be from a
+step or two ago (the worker runs ahead of your polling).</p>
+<h2 id="probes-a-full-report-for-one-column"><a class="header" href="#probes-a-full-report-for-one-column">Probes: a full report for one column</a></h2>
+<p>A <strong>probe</strong> lifts a parcel from one world position and returns the same
+<code>SoundingReportData</code> you met in <a href="#storm-fuel-cape-cin-and-the-key-levels">CAPE</a> and
+<a href="#wind-shear-and-rotating-storms">shear</a> - but for the <strong>live</strong> atmosphere, right now, at
+that spot:</p>
+<pre><code class="language-cpp">client-&gt;probe(Vec2{0.0, 0.0});
+// ... later, draining events ...
+case SimEventKind::Probed: {
+    SoundingReportData r = event-&gt;probe_report();
+    if (r.valid) {
+        std::printf("live CAPE %.0f, CIN %.0f, LCL %.0f m\n",
+                    r.cape, r.cin, r.lcl);
+    }
+    break;
+}
+</code></pre>
+<p>This is the tool for gameplay and telemetry that needs <em>meteorological</em>
+meaning rather than raw fields: show the player a “storm strength” readout,
+decide when conditions are tornado-favorable, trigger an event when live CAPE
+at a location crosses a threshold. <code>valid</code> is false if the position fell
+outside the domain. Because the storm modifies its own environment, a live
+probe drifts from the original sounding as the run goes on - that is expected
+and useful.</p>
+<h2 id="queries-cheap-scalars-and-the-rain-map"><a class="header" href="#queries-cheap-scalars-and-the-rain-map">Queries: cheap scalars and the rain map</a></h2>
+<p>When you want a single number, not a volume, use a <strong>query</strong>. These are the
+cheapest reads.</p>
+<h3 id="query---a-status-snapshot"><a class="header" href="#query---a-status-snapshot"><code>query</code> - a status snapshot</a></h3>
+<p>Returns a <code>Status</code> event with <code>SimStatusData</code>: current sim <code>time</code>, <code>dt</code>,
+<code>step_count</code>, <code>domain</code> size, <code>domain_top</code>, <code>dx_finest</code>. Use it to keep a HUD
+in sync without advancing.</p>
+<h3 id="query_max---domain-wide-peak-of-fields"><a class="header" href="#query_max---domain-wide-peak-of-fields"><code>query_max</code> - domain-wide peak of fields</a></h3>
+<p>Returns a <code>Values</code> event with one value per requested field, in order - the
+maximum <code>|value|</code> of each over the whole domain:</p>
+<pre><code class="language-cpp">Field fields[] = {Field::W, Field::Cloud, Field::Rain};
+client-&gt;query_max(Slice&lt;const Field&gt;{fields, 3});
+// ... draining ...
+case SimEventKind::Values: {
+    Slice&lt;const float&gt; v = event-&gt;values();
+    std::printf("peak updraft %.1f m/s, peak cloud %.2e kg/kg\n", v[0], v[1]);
+    break;
+}
+</code></pre>
+<p>Perfect for “how strong is the storm right now” checks - peak updraft (<code>W</code>),
+peak condensate - without copying any volume. For <code>query_max</code>, the shape
+<code>value_dims()</code> is <code>{n, 1, 1}</code>.</p>
+<h3 id="query_precipitation---the-accumulated-rain-map"><a class="header" href="#query_precipitation---the-accumulated-rain-map"><code>query_precipitation</code> - the accumulated rain map</a></h3>
+<p>Returns a <code>Values</code> event holding the surface <strong>precipitation map</strong> in
+<strong>millimeters</strong> - how much rain has accumulated at each base grid cell since
+the sim began. Here <code>value_dims()</code> is <code>{nx, ny, 1}</code>, the base-cell counts:</p>
+<pre><code class="language-cpp">client-&gt;query_precipitation();
+// ... draining ...
+case SimEventKind::Values: {
+    VoxelDims d = event-&gt;value_dims();          // {nx, ny, 1}
+    Slice&lt;const float&gt; p = event-&gt;values();      // mm, row-major nx*ny
+    float peak = 0.0f;
+    for (size_t i = 0; i &lt; p.size(); ++i) peak = std::max(peak, p[i]);
+    std::printf("rain map %u x %u, peak %.1f mm\n", d.x, d.y, peak);
+    break;
+}
+</code></pre>
+<p>Use it to drive ground wetness, puddles, flooding, or a rainfall overlay.</p>
+<h2 id="saving-and-restoring-snapshots"><a class="header" href="#saving-and-restoring-snapshots">Saving and restoring: snapshots</a></h2>
+<p>You can serialize the entire simulation to bytes and restore it later - for
+save games, deterministic replays, or rewinding:</p>
+<ul>
+<li><strong><code>save_snapshot()</code></strong> answers with a <code>Snapshot</code> event; read the bytes with
+<code>snapshot_bytes()</code> and store them however you like (copy them out before
+the event drops).</li>
+<li><strong><code>load_snapshot(bytes)</code></strong> rebuilds the sim from those bytes and answers
+with <code>SimReady</code> (or <code>Error</code> on a malformed buffer).</li>
+</ul>
+<p>A snapshot captures the grid, fields, refinement, precipitation, and time -
+but <strong>not</strong> the installed scenario or regridder. After loading, <strong>reinstall
+your scenario and regridder</strong> if the run still needs them (reseeding is safe -
+seeds are idempotent, from <a href="#starting-the-weather-scenarios">Scenarios</a>).</p>
+<h2 id="choosing-the-right-read"><a class="header" href="#choosing-the-right-read">Choosing the right read</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>You want…</th><th>Use</th><th>Cost</th></tr>
+</thead>
+<tbody>
+<tr><td>Cloud/rain volume to render</td><td><code>grab_presets</code></td><td>heavy (a volume)</td></tr>
+<tr><td>Raw fields for analysis/debug</td><td><code>grab_fields</code></td><td>heavy</td></tr>
+<tr><td>A meteorological report at a point</td><td><code>probe</code></td><td>light</td></tr>
+<tr><td>Peak updraft / cloud / rain</td><td><code>query_max</code></td><td>very light</td></tr>
+<tr><td>Rain accumulation map</td><td><code>query_precipitation</code></td><td>light</td></tr>
+<tr><td>Sim time / size snapshot</td><td><code>query</code></td><td>trivial</td></tr>
+<tr><td>Save / restore the whole sim</td><td><code>save_snapshot</code> / <code>load_snapshot</code></td><td>heavy (once)</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="takeaways-11"><a class="header" href="#takeaways-11">Takeaways</a></h2>
+<ul>
+<li><strong>Grabs</strong> sample a dense voxel box for rendering: <code>grab_presets</code> for
+render-ready <code>Cloud</code>/<code>Rain</code>/<code>Condensate</code>/<code>Temperature</code>, <code>grab_fields</code> for
+raw fields. Define a <code>ViewBox</code> (resolution independent of the sim grid),
+<code>take_grab()</code> the result, upload each <code>channel(i)</code> (z-slice major), and
+<strong>always <code>recycle</code></strong> the buffer.</li>
+<li><strong>Probes</strong> return a live <code>SoundingReportData</code> (CAPE, shear, …) for one
+column - the tool for meteorological gameplay logic.</li>
+<li><strong>Queries</strong> are cheap scalars: <code>query_max</code> (domain peaks), <code>query_precipitation</code>
+(rain map, mm), <code>query</code> (status). Prefer these over grabs when you only
+need numbers.</li>
+<li><strong>Snapshots</strong> save/restore the whole sim, but not the scenario or
+regridder - reinstall those after <code>load_snapshot</code>.</li>
+</ul>
+<p>Next: the solver knobs, and how to keep a simulation stable.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="options-and-keeping-it-stable"><a class="header" href="#options-and-keeping-it-stable">Options and keeping it stable</a></h1>
+<p><code>create_sim</code> takes a <code>SimOptions</code> struct - the solver’s tuning knobs. You get
+a validated set from <code>default_sim_options()</code> and override the few you need.
+Most fields you can leave alone. This page explains the ones that matter,
+with a focus on the one thing that trips people up: keeping the simulation
+<strong>stable</strong> so a bad number does not blow up (or, here, come back as an
+<code>Error</code>).</p>
+<p>Start every time from the defaults:</p>
+<pre><code class="language-cpp">SimOptions options = default_sim_options();
+// ... override a couple of fields ...
+client-&gt;create_sim(config, axis, std::move(sounding), options);
+</code></pre>
+<h2 id="why-stability-is-a-thing-at-all"><a class="header" href="#why-stability-is-a-thing-at-all">Why stability is a thing at all</a></h2>
+<p>The engine advances the weather in small time steps. There is a hard limit on
+how big each step can be relative to the cell size: <strong>if a step is too big
+for the cells, the numbers explode.</strong> This is a universal fact of grid-based
+physics (the “CFL condition” - think of it as “a wave must not jump more than
+one cell per step”). WeatherEngine checks this for you and, if you violate
+it, returns an <code>Error</code> event instead of running an unstable sim. So stability
+tuning here is really about <em>staying under that limit</em> while stepping as
+fast as you can.</p>
+<p>There are two waves to worry about: the slow weather itself, and fast <strong>sound
+waves</strong>. Sound is the awkward one, because it moves far faster than any storm,
+which would force absurdly tiny steps. The engine uses a trick for it.</p>
+<h2 id="the-time-step-dt_per_meter"><a class="header" href="#the-time-step-dt_per_meter">The time step: <code>dt_per_meter</code></a></h2>
+<p>The base time step is not set directly; it scales with your finest cell size:</p>
+<ul>
+<li><strong><code>dt_per_meter</code></strong> - seconds of time step per meter of finest cell,
+s/m. The actual <code>dt</code> is roughly <code>dt_per_meter * dx_finest</code>. The default
+is tuned so the <em>weather</em> CFL is satisfied at normal cell sizes. Bigger =
+faster but closer to the edge of stability; smaller = safer but slower.</li>
+</ul>
+<p>You rarely change this. The <code>SimReady</code> status reports the resulting <code>dt</code> in
+seconds so you can see what you got.</p>
+<h2 id="the-sound-wave-trick-sound_speed-and-acoustic_substeps"><a class="header" href="#the-sound-wave-trick-sound_speed-and-acoustic_substeps">The sound-wave trick: <code>sound_speed</code> and <code>acoustic_substeps</code></a></h2>
+<p>Real sound travels at ~340 m/s. Resolving it directly would force a tiny time
+step. The engine instead uses a <strong>slower artificial sound speed</strong> and takes
+several cheap <strong>acoustic substeps</strong> within each weather step, which keeps the
+pressure field consistent without crippling the step size.</p>
+<ul>
+<li><strong><code>sound_speed</code></strong> - the artificial sound speed, m/s. Lower means a bigger
+stable step (cheaper), but it must stay <em>above</em> the fastest air motion in
+your storm or the pressure solve misbehaves. The examples use <strong>120 m/s</strong> -
+comfortably above storm updrafts (tens of m/s) yet far below real sound.</li>
+<li><strong><code>acoustic_substeps</code></strong> - how many acoustic substeps per weather step. More
+substeps let you use a lower <code>sound_speed</code> or larger cells while staying
+stable. The examples use <strong>7</strong>.</li>
+<li><strong><code>off_centering</code></strong> - a small forward-weighting (~0.2) that damps acoustic
+noise. Leave at the default unless you see pressure ringing.</li>
+</ul>
+<h3 id="the-one-override-you-will-almost-always-make"><a class="header" href="#the-one-override-you-will-almost-always-make">The one override you will almost always make</a></h3>
+<p>The default <code>sound_speed</code>/<code>acoustic_substeps</code> are tuned for a particular cell
+size. At the example’s 200 m cells the acoustic CFL is a touch tight, so the
+examples loosen it exactly like this:</p>
+<pre><code class="language-cpp">SimOptions options = default_sim_options();
+options.sound_speed = 120.0f;      // slower artificial sound
+options.acoustic_substeps = 7;     // enough substeps to stay stable
+</code></pre>
+<p>If <code>create_sim</code> returns an <code>Error</code> mentioning an <strong>acoustic CFL</strong> violation,
+this pair is the fix: <strong>lower <code>sound_speed</code></strong> and/or <strong>raise
+<code>acoustic_substeps</code></strong> until it is accepted. (Internally the acoustic CFL must
+stay at or below 0.35; you do not compute it - you just nudge these two until
+the config is accepted.)</p>
+<h2 id="mixing-and-reference-density"><a class="header" href="#mixing-and-reference-density">Mixing and reference density</a></h2>
+<ul>
+<li><strong><code>diffusivity</code></strong> (m²/s) - how strongly the solver smooths small-scale
+noise, a stand-in for turbulent mixing. Higher = smoother, more diffuse
+storms; lower = sharper but noisier. Default is a good balance.</li>
+<li><strong><code>air_density</code></strong> (kg/m³) - a reference air density (~1.2 at sea level).
+Leave at default unless you are matching a specific setup.</li>
+</ul>
+<h2 id="advection-how-stuff-is-carried-by-the-wind"><a class="header" href="#advection-how-stuff-is-carried-by-the-wind">Advection: how stuff is carried by the wind</a></h2>
+<p><strong><code>advection</code></strong> picks how the solver moves quantities along with the flow
+(the interpolation used when tracing where each cell’s air came from):</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th><code>AdvectionScheme</code></th><th>Character</th><th>Cost</th></tr>
+</thead>
+<tbody>
+<tr><td><code>Linear</code></td><td>cheap, but smears/diffuses sharp features</td><td>lowest</td></tr>
+<tr><td><code>VelocityCubic</code></td><td>sharp winds, smooth scalars - <strong>the default</strong></td><td>medium</td></tr>
+<tr><td><code>MonotoneCubic</code></td><td>sharpest everywhere, no overshoot</td><td>highest</td></tr>
+</tbody>
+</table>
+</div>
+<p>Stick with the default <code>VelocityCubic</code> unless you have a reason. Drop to
+<code>Linear</code> to save time when you do not care about crisp cloud edges; go to
+<code>MonotoneCubic</code> for the cleanest visuals at more cost.</p>
+<ul>
+<li><strong><code>skip_quiescent</code></strong> - a performance option: copy undisturbed (“quiet”)
+bricks straight through instead of advecting them. Safe speedup for
+domains with lots of calm air; leave it on if the default enables it.</li>
+</ul>
+<h2 id="the-boundaries-sponges-and-lids"><a class="header" href="#the-boundaries-sponges-and-lids">The boundaries: sponges and lids</a></h2>
+<p>Your domain has edges, and weather hitting an edge would reflect back inward
+and corrupt the solution - like waves bouncing off the walls of a bathtub.
+<strong>Sponge layers</strong> are soft zones near the edges that gently absorb outgoing
+disturbances so they leave cleanly.</p>
+<ul>
+<li><strong><code>side_sponge</code></strong> - width, in base cells, of the absorbing zone on the x
+and y sides (a <code>VoxelDims</code>; <code>0</code> on an axis disables it there). Keep some
+side sponge if storms might approach the horizontal edges.</li>
+<li><strong><code>top_sponge</code></strong> - width, in cells, of the absorbing zone at the domain
+top. Important: a storm’s updraft slams into the top, and without a top
+sponge (or a lid) that energy reflects down. <code>0</code> disables it.</li>
+<li><strong><code>sponge_strength</code></strong> - how hard the outermost sponge layer damps. Too weak
+leaks reflections; too strong can reflect off the sponge itself. Default is
+balanced.</li>
+<li><strong><code>rigid_lid</code></strong> - instead of (or with) a top sponge, treat the domain top
+as a solid ceiling (zero vertical wind there each substep). Realistic when
+your top sits in the stable stratosphere, which naturally caps storms.
+Combine a modest <code>top_sponge</code> with the storm top clearing the EL (from
+<a href="#building-a-world-grid-and-vertical-axis">Building a world</a>) for clean tops.</li>
+</ul>
+<p>If storm tops look like they are bouncing or piling unnaturally, revisit
+<code>top_sponge</code>, <code>rigid_lid</code>, and whether your domain is tall enough.</p>
+<h2 id="parallelism"><a class="header" href="#parallelism">Parallelism</a></h2>
+<ul>
+<li><strong><code>parallel</code></strong> - fan each solver pass out over the worker’s thread pool.
+This is a pure speed switch: the result is <strong>bitwise-identical</strong> whether on
+or off, so turning it on never changes the weather, only how fast it steps.
+Leave it on for real runs. (Recall the pool size is capped by
+<code>new_sim_client</code>, from <a href="#how-the-engine-is-shaped">How the engine is shaped</a>.)</li>
+</ul>
+<h2 id="a-sensible-starting-simoptions"><a class="header" href="#a-sensible-starting-simoptions">A sensible starting <code>SimOptions</code></a></h2>
+<p>For a 200 m domain, this is all most projects touch:</p>
+<pre><code class="language-cpp">SimOptions options = default_sim_options();
+options.sound_speed = 120.0f;     // loosen acoustic CFL for 200 m cells
+options.acoustic_substeps = 7;
+// everything else: keep the validated defaults.
+</code></pre>
+<p>Then, only if you hit a problem:</p>
+<ul>
+<li><code>Error</code> about acoustic CFL -&gt; lower <code>sound_speed</code>, raise
+<code>acoustic_substeps</code>.</li>
+<li>Storm tops reflecting -&gt; raise <code>top_sponge</code> or set <code>rigid_lid</code>, check
+domain height vs. EL.</li>
+<li>Storms too noisy -&gt; raise <code>diffusivity</code> or use <code>MonotoneCubic</code>.</li>
+<li>Too slow -&gt; ensure <code>parallel</code> is on, consider <code>Linear</code> advection and
+<code>skip_quiescent</code>, or coarsen the grid.</li>
+</ul>
+<h2 id="takeaways-12"><a class="header" href="#takeaways-12">Takeaways</a></h2>
+<ul>
+<li>Always start from <strong><code>default_sim_options()</code></strong> and override sparingly.</li>
+<li>Grid physics has a hard <strong>stability limit</strong>; break it and <code>create_sim</code>
+returns an <code>Error</code>, not a crash. The usual fix for a 200 m domain is
+<code>sound_speed = 120</code>, <code>acoustic_substeps = 7</code>.</li>
+<li><code>sound_speed</code> / <code>acoustic_substeps</code> trade step size against cost via the
+artificial-sound trick; <code>dt_per_meter</code> scales the base step with cell size.</li>
+<li><code>advection</code> picks sharpness vs. cost (default <code>VelocityCubic</code>);
+<code>diffusivity</code> smooths noise.</li>
+<li><strong>Sponges</strong> (<code>side_sponge</code>, <code>top_sponge</code>, <code>sponge_strength</code>) and
+<code>rigid_lid</code> stop weather reflecting off the domain edges - mind the top.</li>
+<li><code>parallel</code> is a free, bitwise-identical speedup.</li>
+</ul>
+<p>That is the whole engine. Part IV is quick reference: ready-made recipes and
+a glossary.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="recipes"><a class="header" href="#recipes">Recipes</a></h1>
+<p>Ready-made setups you can adapt. Each says what weather it makes, which
+meteorology chapter it leans on, and the code that matters. They assume the
+<code>pump_until</code> helper and <code>using namespace</code> lines from the examples (see
+<code>quickstart.cpp</code> in the examples). Full programs live in the <code>examples/</code>
+folder - these recipes are the <em>decisions</em>, not the boilerplate.</p>
+<h2 id="the-boilerplate-once"><a class="header" href="#the-boilerplate-once">The boilerplate, once</a></h2>
+<p>Every recipe drops into this shape:</p>
+<pre><code class="language-cpp">Box&lt;SimClient&gt; client = new_sim_client(0);      // or a core budget, e.g. 8
+
+// 1) build a sounding (varies per recipe)
+Box&lt;Sounding&gt; sounding = /* ... */;
+
+// 2) build the world
+GridConfig config{};   /* ... set fields ... */
+AxisConfig axis{};     /* ... set fields ... */
+SimOptions options = default_sim_options();
+options.sound_speed = 120.0f;
+options.acoustic_substeps = 7;
+client-&gt;create_sim(config, axis, std::move(sounding), options);
+if (pump_until(*client, SimEventKind::SimReady)-&gt;kind() == SimEventKind::Error) return;
+
+// 3) install a scenario (varies per recipe)
+// 4) optionally set a regridder (varies)
+// 5) each frame: advance + grab + drain poll()
+</code></pre>
+<p>Below, only the parts that change are shown.</p>
+<h2 id="1-smallest-storm-start-here"><a class="header" href="#1-smallest-storm-start-here">1. Smallest storm (start here)</a></h2>
+<p><strong>Makes:</strong> one thunderstorm in a small box. <strong>Leans on:</strong>
+<a href="#why-air-rises-stability-and-convection">convection</a>, <a href="#starting-the-weather-scenarios">scenarios</a>.</p>
+<p>A uniform 12.8 km box, a storm-ready sounding, one warm moist seed, no
+regridder.</p>
+<pre><code class="language-cpp">Box&lt;Sounding&gt; sounding = sounding_convective();
+
+GridConfig config{};
+config.dx_finest = 200.0;  config.levels = 1;        // uniform 200 m
+config.brick_size = 8;     config.halo_width = 4;
+config.base_bricks = VoxelDims{8, 8, 0};
+config.origin = Vec2{-6400.0, -6400.0};              // 12.8 km, centered
+
+AxisConfig axis{};
+axis.k_levels = 24;  axis.dz_surface = 200.0;
+axis.dz_top = 600.0; axis.max_growth = 0.10;
+
+// ... create_sim ...
+
+Box&lt;Scenario&gt; scenario = new_scenario();
+Vec3 center{0.0, 0.0, 1000.0};
+Vec3 radii {2000.0, 2000.0, 1000.0};
+scenario-&gt;add_seed_ellipsoid(Field::Theta, center, radii, 3.0f);   // +3 K
+scenario-&gt;add_seed_ellipsoid(Field::Vapor, center, radii, 0.003f); // +3 g/kg
+client-&gt;install_scenario(std::move(scenario));
+pump_until(*client, SimEventKind::Status);
+
+for (int i = 0; i &lt; 60; ++i) {
+    client-&gt;advance(10, 0);                            // no regrid
+    pump_until(*client, SimEventKind::Advanced);
+}
+</code></pre>
+<p><strong>Tune:</strong> weak storm -&gt; moister sounding or bigger vapor seed. Nothing fires
+-&gt; bigger theta seed (the cap is holding it down).</p>
+<h2 id="2-a-parked-supercell"><a class="header" href="#2-a-parked-supercell">2. A parked supercell</a></h2>
+<p><strong>Makes:</strong> a long-lived, rotating storm that stays centered while the world
+flows past. <strong>Leans on:</strong> <a href="#wind-shear-and-rotating-storms">shear</a>.</p>
+<p>The trick is subtracting the Bunkers storm motion from the wind so the storm
+does not walk off the grid.</p>
+<pre><code class="language-cpp">Box&lt;Sounding&gt; sounding = sounding_convective();   // already has good shear
+
+// Park it: shift into the storm's own moving frame.
+Vec2 motion = sounding-&gt;bunkers_right_mover();
+
+// Re-author the wind profile minus that motion. (Use your own levels;
+// these mirror the built-in convective profile.)
+WindPoint wind[] = {
+    {    0.0f, -8.0f, -6.0f},
+    { 2000.0f, -2.0f, -1.0f},
+    { 6000.0f,  8.0f,  1.0f},
+    {12000.0f, 12.0f,  2.0f},
+    {20000.0f, 12.0f,  2.0f},
+};
+for (WindPoint&amp; w : wind) {
+    w.east  -= static_cast&lt;float&gt;(motion.x);
+    w.north -= static_cast&lt;float&gt;(motion.y);
+}
+sounding-&gt;set_wind(Slice&lt;const WindPoint&gt;{wind, 5});
+
+// Confirm the environment still looks supercellular AFTER parking
+// (shear and helicity are frame-independent, so they should be unchanged):
+SoundingReportData r = sounding-&gt;analyze();
+std::printf("CAPE %.0f  SRH0-1 %.0f  SCP %.1f\n",
+            r.cape, r.srh_0_1km, r.supercell_composite);
+</code></pre>
+<p>Use a <strong>bigger domain</strong> (<code>levels = 3</code>, <code>base_bricks {16,16}</code>) and a
+<strong>regridder</strong> (recipe 4) so the fine grid tracks the storm’s internal
+structure even while it sits still overall.</p>
+<h2 id="3-adaptive-domain-that-follows-a-moving-storm"><a class="header" href="#3-adaptive-domain-that-follows-a-moving-storm">3. Adaptive domain that follows a moving storm</a></h2>
+<p><strong>Makes:</strong> a storm free to drift across a large map, with fine cells chasing
+it. <strong>Leans on:</strong> <a href="#following-the-storm-the-adaptive-grid">the adaptive grid</a>.</p>
+<p>Do <em>not</em> park the storm; instead give it a big multi-level domain and a
+regridder.</p>
+<pre><code class="language-cpp">GridConfig config{};
+config.dx_finest = 200.0;  config.levels = 3;        // 800 m coarse -&gt; 200 m fine
+config.brick_size = 8;     config.halo_width = 4;
+config.base_bricks = VoxelDims{16, 16, 0};
+config.origin = Vec2{-51200.0, -51200.0};            // 102.4 km, centered
+
+// ... create_sim, install a seed near one side ...
+
+Box&lt;Regridder&gt; regridder = new_regridder(3, 3);       // hysteresis
+TierTrigger birth{};                                   // level 1: the whole storm
+birth.theta_above = 0.8f;  birth.w_above = 1.5f;
+birth.condensate_above = 1.0e-4f; birth.zeta_above = 1.0e30f;
+birth.pad_bricks = 1; birth.max_bricks = 320;
+regridder-&gt;add_tier(birth);
+TierTrigger core{};                                    // level 2: the violent core
+core.theta_above = 1.0e30f; core.w_above = 5.0f;
+core.condensate_above = 3.0e-3f; core.zeta_above = 5.0e-3f;
+core.pad_bricks = 1; core.max_bricks = 256;
+regridder-&gt;add_tier(core);
+client-&gt;set_regridder(std::move(regridder));
+pump_until(*client, SimEventKind::Status);
+
+// Each frame: regrid every 5 steps, and WATCH THE MARGIN.
+for (int frame = 0; frame &lt; 300; ++frame) {
+    client-&gt;advance(5, 5);
+    for (;;) {
+        Box&lt;SimEvent&gt; e = client-&gt;poll();
+        if (e-&gt;kind() == SimEventKind::None) break;
+        if (e-&gt;kind() == SimEventKind::Regridded &amp;&amp;
+            e-&gt;regrid_summary().min_margin == 0) {
+            std::printf("storm reached its fine-grid edge - raise pad_bricks\n");
+        }
+    }
+}
+</code></pre>
+<p><strong>Tune:</strong> <code>min_margin</code> hitting 0 -&gt; raise <code>pad_bricks</code> or regrid more often.
+Cost too high -&gt; lower <code>max_bricks</code> (accepts coarser edges).</p>
+<h2 id="4-a-front-cold-air-undercutting-warm-air"><a class="header" href="#4-a-front-cold-air-undercutting-warm-air">4. A front: cold air undercutting warm air</a></h2>
+<p><strong>Makes:</strong> storms firing along a boundary, not from a single bubble. <strong>Leans
+on:</strong> <a href="#starting-the-weather-scenarios">air masses</a>.</p>
+<p>Paint a cold, stable air mass into part of a warm, unstable domain. Where the
+cold air undercuts the warm moist air, it lifts it and fires convection along
+the seam.</p>
+<pre><code class="language-cpp">Box&lt;Sounding&gt; warm = sounding_convective();   // domain base state
+// ... create_sim with `warm` ...
+
+Box&lt;Sounding&gt; cold = sounding_quiet();        // a cool, stable brush
+Box&lt;Scenario&gt; scenario = new_scenario();
+
+// Stamp cold air over the western half, as an initial condition (nudge 0),
+// so it is free to advance eastward and undercut the warm air.
+scenario-&gt;add_air_mass_box(
+    *cold,
+    Vec3{-51200.0, -51200.0,     0.0},
+    Vec3{     0.0,  51200.0,  6000.0},
+    /*softness=*/3000.0,
+    /*with_winds=*/true,
+    /*nudge_rate=*/0.0f,          // release it; let the front move
+    envelope_always());
+
+// A gentle push to get storms going right at the seam.
+scenario-&gt;add_seed_ellipsoid(Field::Theta, Vec3{500.0, 0.0, 800.0},
+                             Vec3{1500.0, 4000.0, 700.0}, 2.0f);
+client-&gt;install_scenario(std::move(scenario));
+</code></pre>
+<p><strong>Tune:</strong> set <code>nudge_rate &gt; 0</code> to <em>hold</em> the cold pool as a persistent source
+(continuous outflow) instead of a one-time front.</p>
+<h2 id="5-reading-the-storm-each-frame-rendering--telemetry"><a class="header" href="#5-reading-the-storm-each-frame-rendering--telemetry">5. Reading the storm each frame (rendering + telemetry)</a></h2>
+<p><strong>Makes:</strong> nothing new - shows the read-out loop. <strong>Leans on:</strong>
+<a href="#getting-data-back-out">getting data out</a>.</p>
+<pre><code class="language-cpp">ViewBox view{};
+view.min = Vec2{-51200.0, -51200.0};
+view.max = Vec2{ 51200.0,  51200.0};
+view.resolution = VoxelDims{128, 128, 48};
+ChannelPreset presets[] = {ChannelPreset::Cloud, ChannelPreset::Rain};
+
+for (int frame = 0; frame &lt; 600; ++frame) {
+    client-&gt;advance(5, 5);
+    client-&gt;grab_presets(view, Slice&lt;const ChannelPreset&gt;{presets, 2});
+
+    // Cheap telemetry a few times a second, not every frame:
+    if (frame % 30 == 0) {
+        Field peak[] = {Field::W};
+        client-&gt;query_max(Slice&lt;const Field&gt;{peak, 1});
+        client-&gt;probe(Vec2{0.0, 0.0});
+    }
+
+    for (;;) {
+        Box&lt;SimEvent&gt; e = client-&gt;poll();
+        switch (e-&gt;kind()) {
+        case SimEventKind::None: goto next_frame;
+        case SimEventKind::Grabbed: {
+            Box&lt;ViewGrab&gt; g = e-&gt;take_grab();
+            // upload g-&gt;channel(0) (cloud), g-&gt;channel(1) (rain) as 3D textures
+            client-&gt;recycle(std::move(g));       // always recycle!
+            break;
+        }
+        case SimEventKind::Values:
+            std::printf("peak |w| = %.1f m/s\n", e-&gt;values()[0]);
+            break;
+        case SimEventKind::Probed:
+            std::printf("live CAPE %.0f\n", e-&gt;probe_report().cape);
+            break;
+        default: break;
+        }
+    }
+    next_frame:;
+}
+</code></pre>
+<h2 id="6-calm-skies--a-control-run"><a class="header" href="#6-calm-skies--a-control-run">6. Calm skies / a control run</a></h2>
+<p><strong>Makes:</strong> deliberately nothing - a stable, quiet reference. <strong>Leans on:</strong>
+<a href="#why-air-rises-stability-and-convection">stability</a>.</p>
+<p>Use <code>sounding_quiet()</code> and either no scenario or only tiny perturbations.
+Weather refuses to happen in this environment - useful as a baseline, a
+clear-sky state, or to confirm your pipeline is wired up before you add a
+storm.</p>
+<pre><code class="language-cpp">Box&lt;Sounding&gt; sounding = sounding_quiet();
+// ... create_sim, no seeds (or a tiny one that fizzles), just step and grab ...
+</code></pre>
+<h2 id="7-save-and-restore-rewind--save-game"><a class="header" href="#7-save-and-restore-rewind--save-game">7. Save and restore (rewind / save game)</a></h2>
+<p><strong>Leans on:</strong> <a href="#getting-data-back-out">snapshots</a>.</p>
+<pre><code class="language-cpp">// Save:
+client-&gt;save_snapshot();
+Box&lt;SimEvent&gt; snap = pump_until(*client, SimEventKind::Snapshot);
+Slice&lt;const uint8_t&gt; bytes = snap-&gt;snapshot_bytes();
+std::vector&lt;uint8_t&gt; saved(bytes.begin(), bytes.end());   // copy out now
+
+// ... keep stepping ...
+
+// Restore (rolls the sim back to the saved state):
+client-&gt;load_snapshot(Slice&lt;const uint8_t&gt;{saved.data(), saved.size()});
+pump_until(*client, SimEventKind::SimReady);
+// Reinstall scenario / regridder here - a snapshot does not keep them.
+</code></pre>
+<h2 id="tuning-cheat-sheet"><a class="header" href="#tuning-cheat-sheet">Tuning cheat-sheet</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Symptom</th><th>First thing to try</th></tr>
+</thead>
+<tbody>
+<tr><td>Nothing fires</td><td>Bigger <code>Theta</code> seed; check <code>analyze()</code> CAPE &gt; ~1000</td></tr>
+<tr><td>Weak, mushy storm</td><td>Moister sounding / bigger <code>Vapor</code> seed</td></tr>
+<tr><td>Everything erupts at once</td><td>A bit more CIN (cap); smaller seed</td></tr>
+<tr><td>Storm rains out fast</td><td>More shear in the wind profile</td></tr>
+<tr><td>Storm walks off grid</td><td>Park it (recipe 2) or regrid + bigger <code>pad_bricks</code></td></tr>
+<tr><td><code>min_margin</code> hits 0</td><td>Raise <code>pad_bricks</code>, lower <code>regrid_every</code></td></tr>
+<tr><td><code>create_sim</code> Error (acoustic)</td><td>Lower <code>sound_speed</code>, raise <code>acoustic_substeps</code></td></tr>
+<tr><td>Storm top looks clipped</td><td>Taller domain (axis) so top clears the EL</td></tr>
+<tr><td>Per-frame stutter/leak</td><td>Make sure you <code>recycle</code> every grab</td></tr>
+</tbody>
+</table>
+</div>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="glossary"><a class="header" href="#glossary">Glossary</a></h1>
+<p>Quick definitions, plain English. Meteorology terms and the engine terms that
+use them, together, so you can look up either. Links point to the chapter
+that explains the idea in full.</p>
+<h2 id="weather-terms"><a class="header" href="#weather-terms">Weather terms</a></h2>
+<p><strong>Advection</strong> - the carrying of something (heat, moisture, momentum) along by
+the wind. The engine’s <code>AdvectionScheme</code> option picks how this is computed.
+See <a href="#options-and-keeping-it-stable">Options</a>.</p>
+<p><strong>Air mass</strong> - a large body of air with roughly uniform temperature and
+moisture. In the engine, a region painted with a different sounding’s air.
+See <a href="#starting-the-weather-scenarios">Scenarios</a>.</p>
+<p><strong>Buoyancy</strong> - the tendency of lighter (warmer or moister) air to rise and
+heavier (cooler, drier) air to sink. The hot-air-balloon rule. See
+<a href="#why-air-rises-stability-and-convection">Convection</a>.</p>
+<p><strong>Bunkers storm motion</strong> - an empirical estimate of how fast and which way a
+supercell moves (it deviates from the mean wind). Reported as <code>storm_motion</code>;
+subtract it from the wind to park a storm. See <a href="#wind-shear-and-rotating-storms">Shear</a>.</p>
+<p><strong>CAPE</strong> (Convective Available Potential Energy, J/kg) - the storm’s fuel:
+total energy a rising parcel gains from buoyancy. Higher = stronger storms.
+See <a href="#storm-fuel-cape-cin-and-the-key-levels">CAPE</a>.</p>
+<p><strong>CIN</strong> (Convective Inhibition, J/kg) - the “cap”: energy a parcel must be
+forced through before it can rise freely. Reported as a positive magnitude.
+See <a href="#storm-fuel-cape-cin-and-the-key-levels">CAPE</a>.</p>
+<p><strong>Condensation</strong> - vapor turning into liquid droplets (cloud). Releases
+latent heat, which powers storms. See <a href="#water-in-the-air">Moisture</a>.</p>
+<p><strong>Conditional instability</strong> - the common storm-day state: stable to a dry
+parcel, but unstable once a moist parcel is lifted high enough to start
+condensing. Why a small seed can grow a storm. See
+<a href="#why-air-rises-stability-and-convection">Convection</a>.</p>
+<p><strong>Convection</strong> - vertical air motion driven by buoyancy; the engine of
+clouds and storms. See <a href="#why-air-rises-stability-and-convection">Convection</a>.</p>
+<p><strong>Downdraft</strong> - sinking air within a storm, dragged down by falling rain;
+spreads out as gusty outflow at the ground. See
+<a href="#why-air-rises-stability-and-convection">Convection</a>.</p>
+<p><strong>EL</strong> (Equilibrium Level, m) - the height where a rising parcel cools back
+to match its surroundings and stops; roughly the storm top / anvil. Your
+domain should reach above it. See <a href="#storm-fuel-cape-cin-and-the-key-levels">CAPE</a>.</p>
+<p><strong>Helicity</strong> - see SRH.</p>
+<p><strong>Kelvin</strong> (K) - the temperature unit used throughout: Celsius + 273.15. 300
+K is a warm surface value. See <a href="#heat-and-potential-temperature">Temperature</a>.</p>
+<p><strong>Latent heat</strong> - the hidden heat released when vapor condenses (or absorbed
+when water evaporates). The energy source that makes moist storms strong. See
+<a href="#water-in-the-air">Moisture</a>.</p>
+<p><strong>LCL</strong> (Lifting Condensation Level, m) - the height a rising surface parcel
+first saturates and cloud forms; cloud base. See <a href="#storm-fuel-cape-cin-and-the-key-levels">CAPE</a>.</p>
+<p><strong>LFC</strong> (Level of Free Convection, m) - the height above which a lifted
+parcel is buoyant and rises on its own, no more push needed. See
+<a href="#storm-fuel-cape-cin-and-the-key-levels">CAPE</a>.</p>
+<p><strong>Mesocyclone</strong> - the rotating updraft at the heart of a supercell. The
+engine can refine the grid on its spin via the <code>zeta_above</code> trigger. See
+<a href="#wind-shear-and-rotating-storms">Shear</a> and <a href="#following-the-storm-the-adaptive-grid">the regridder</a>.</p>
+<p><strong>Mixing ratio</strong> - mass of water per mass of dry air, kg/kg (or g/kg). How
+the engine measures vapor, cloud, and rain. <code>0.014</code> kg/kg is moist. See
+<a href="#water-in-the-air">Moisture</a>.</p>
+<p><strong>Outflow</strong> - the cool, gusty air that spreads out at the ground under a
+storm’s downdraft; can trigger new storms at its edge. See
+<a href="#why-air-rises-stability-and-convection">Convection</a>.</p>
+<p><strong>Parcel</strong> - an imaginary small blob of air you track as it rises or sinks,
+used to reason about buoyancy and stability. See
+<a href="#why-air-rises-stability-and-convection">Convection</a>.</p>
+<p><strong>Perturbation</strong> - the small departure of a field from the base sounding.
+The engine stores and seeds perturbations (e.g. a <code>+3 K</code> theta bump), not
+absolute values. Written with a prime, like theta’. See
+<a href="#heat-and-potential-temperature">Temperature</a>.</p>
+<p><strong>Potential temperature (theta, θ, K)</strong> - the temperature a parcel would have
+brought to a reference pressure; removes the cooling-with-height effect so
+you can compare air across altitudes. Constant with height = neutral,
+increasing = stable, decreasing = unstable. The <code>Theta</code> field. See
+<a href="#heat-and-potential-temperature">Temperature</a>.</p>
+<p><strong>Precipitation</strong> - rain reaching the ground. The engine accumulates it into
+a surface map in millimeters (<code>query_precipitation</code>). See
+<a href="#getting-data-back-out">Output</a>.</p>
+<p><strong>Pressure</strong> (Pa) - the weight of the air above pressing down; falls with
+height. The engine tracks its small perturbation, the <code>Pressure</code> field. See
+<a href="#the-atmosphere-in-five-minutes">The atmosphere</a>.</p>
+<p><strong>Saturation</strong> - the most vapor air can hold at a given temperature; beyond
+it, vapor condenses. Warm air saturates at more vapor than cold air. See
+<a href="#water-in-the-air">Moisture</a>.</p>
+<p><strong>Shear (wind shear)</strong> - the change of wind with height. Organizes storms:
+low shear = brief showers, high shear = supercells. Reported as
+<code>shear_0_6km</code>. See <a href="#wind">Wind</a> and <a href="#wind-shear-and-rotating-storms">Shear</a>.</p>
+<p><strong>Sounding</strong> - the vertical profile of the atmosphere over one spot: theta,
+vapor, and wind by height. Your world’s starting air; the <code>Sounding</code> handle.
+See <a href="#the-sounding">The sounding</a>.</p>
+<p><strong>SRH</strong> (Storm-Relative Helicity, m²/s²) - a measure of the spinning air a
+storm can ingest; drives rotation and tornado potential. Reported as
+<code>srh_0_1km</code> and <code>srh_0_3km</code>. See <a href="#wind-shear-and-rotating-storms">Shear</a>.</p>
+<p><strong>Stability</strong> - whether the atmosphere resists (stable) or encourages
+(unstable) vertical motion. Set by the theta profile. See
+<a href="#why-air-rises-stability-and-convection">Convection</a>.</p>
+<p><strong>Stratosphere</strong> - the stable layer above the troposphere; acts as a lid that
+flattens storm tops into anvils. See <a href="#the-atmosphere-in-five-minutes">The atmosphere</a>.</p>
+<p><strong>Supercell</strong> - a long-lived, rotating thunderstorm; the type that makes big
+hail and tornadoes. Needs CAPE, shear, and helicity together. See
+<a href="#wind-shear-and-rotating-storms">Shear</a>.</p>
+<p><strong>Tropopause / troposphere</strong> - the troposphere is the weather layer (ground
+to ~10-12 km); the tropopause is its top boundary. See
+<a href="#the-atmosphere-in-five-minutes">The atmosphere</a>.</p>
+<p><strong>Updraft</strong> - rising air within a storm; large positive <code>W</code>. The engine
+refines the grid on it via the <code>w_above</code> trigger. See
+<a href="#why-air-rises-stability-and-convection">Convection</a>.</p>
+<p><strong>Vorticity (zeta, ζ, 1/s)</strong> - how fast the air is locally spinning. A
+threshold (<code>zeta_above</code>) refines the grid on rotating cores. See
+<a href="#following-the-storm-the-adaptive-grid">the regridder</a>.</p>
+<h2 id="engine-terms"><a class="header" href="#engine-terms">Engine terms</a></h2>
+<p><strong>Actor</strong> - the design where the simulation owns its state and you talk to it
+only by messages (commands in, events out). See
+<a href="#how-the-engine-is-shaped">How the engine is shaped</a>.</p>
+<p><strong>AxisConfig</strong> - the stretched vertical grid: layer count and thickness from
+surface to top. See <a href="#building-a-world-grid-and-vertical-axis">Building a world</a>.</p>
+<p><strong>Brick</strong> - a small cube of grid cells (e.g. 8x8x8); the unit of storage and
+refinement. See <a href="#building-a-world-grid-and-vertical-axis">Building a world</a>.</p>
+<p><strong>ChannelPreset</strong> - a render-ready derived channel for <code>grab_presets</code>
+(<code>Cloud</code>, <code>Rain</code>, <code>Condensate</code>, <code>Temperature</code>). See
+<a href="#getting-data-back-out">Output</a>.</p>
+<p><strong>Envelope</strong> - a smooth on/off time window (with ramps) for a feed’s forcing;
+<code>envelope_always()</code> is always-on. See <a href="#starting-the-weather-scenarios">Scenarios</a>.</p>
+<p><strong>Feed</strong> - persistent forcing over time within an envelope: <code>nudge</code> (hold
+toward a target) or <code>source</code> (inject at a rate). See
+<a href="#starting-the-weather-scenarios">Scenarios</a>.</p>
+<p><strong>Field</strong> - a prognostic quantity the sim solves: <code>Theta</code>, <code>Vapor</code>, <code>Cloud</code>,
+<code>Rain</code>, <code>U</code>, <code>V</code>, <code>W</code>, <code>Pressure</code>. See <a href="#the-atmosphere-in-five-minutes">The atmosphere</a>.</p>
+<p><strong>Grab</strong> - a copy of the weather sampled onto a dense voxel box for
+rendering (<code>grab_presets</code> / <code>grab_fields</code>), delivered as a <code>ViewGrab</code>. See
+<a href="#getting-data-back-out">Output</a>.</p>
+<p><strong>GridConfig</strong> - the horizontal grid: finest cell size, refinement levels,
+brick size, domain extent, origin. See <a href="#building-a-world-grid-and-vertical-axis">Building a world</a>.</p>
+<p><strong>Probe</strong> - sampling one live column into a full <code>SoundingReportData</code> at a
+world position. See <a href="#getting-data-back-out">Output</a>.</p>
+<p><strong>Query</strong> - a cheap scalar read: <code>query</code> (status), <code>query_max</code> (domain
+peaks), <code>query_precipitation</code> (rain map). See <a href="#getting-data-back-out">Output</a>.</p>
+<p><strong>Regridder</strong> - the adaptive-grid controller: a ladder of tiers that refine
+where the storm is and coarsen elsewhere. See
+<a href="#following-the-storm-the-adaptive-grid">the regridder</a>.</p>
+<p><strong>Request id</strong> - the <code>uint64_t</code> a command returns; <code>0</code> means the queue was
+full (retry next frame). Matches to an event’s <code>seq()</code>. See
+<a href="#how-the-engine-is-shaped">How the engine is shaped</a>.</p>
+<p><strong>Scenario</strong> - the set of edits that start weather: seeds, feeds, air masses.
+See <a href="#starting-the-weather-scenarios">Scenarios</a>.</p>
+<p><strong>Seed</strong> - a one-shot perturbation written into a region (ellipsoid / box /
+path); the usual storm trigger. See <a href="#starting-the-weather-scenarios">Scenarios</a>.</p>
+<p><strong>SimClient</strong> - your handle to the background worker: send commands, poll
+events. See <a href="#how-the-engine-is-shaped">How the engine is shaped</a>.</p>
+<p><strong>SimEvent / SimEventKind</strong> - one polled response and its variant tag
+(<code>Advanced</code>, <code>Grabbed</code>, <code>Regridded</code>, <code>Error</code>, …). See
+<a href="#how-the-engine-is-shaped">How the engine is shaped</a>.</p>
+<p><strong>SimOptions</strong> - the solver knobs (time step, sound speed, advection,
+sponges, …); start from <code>default_sim_options()</code>. See
+<a href="#options-and-keeping-it-stable">Options</a>.</p>
+<p><strong>Snapshot</strong> - the serialized whole-sim state (<code>save_snapshot</code> /
+<code>load_snapshot</code>); does not include the scenario or regridder. See
+<a href="#getting-data-back-out">Output</a>.</p>
+<p><strong>Sponge</strong> - an absorbing zone near a domain edge that stops weather
+reflecting back in. See <a href="#options-and-keeping-it-stable">Options</a>.</p>
+<p><strong>Tier / TierTrigger</strong> - one rung of the regridder ladder and the thresholds
+(<code>theta_above</code>, <code>w_above</code>, <code>condensate_above</code>, <code>zeta_above</code>) that fire it.
+See <a href="#following-the-storm-the-adaptive-grid">the regridder</a>.</p>
+<p><strong>ViewBox</strong> - the window a grab samples: horizontal world box plus output
+voxel resolution. See <a href="#getting-data-back-out">Output</a>.</p>
+<p><strong>ViewGrab</strong> - the buffer a grab returns; read its <code>channel(i)</code> volumes,
+then <code>recycle</code> it. See <a href="#getting-data-back-out">Output</a>.</p>
+<p><strong>Worker thread</strong> - the background thread that owns and runs the simulation,
+sized by <code>new_sim_client</code>. See <a href="#how-the-engine-is-shaped">How the engine is shaped</a>.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+
+    </div>
+    </body>
+</html>

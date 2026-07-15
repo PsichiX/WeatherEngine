@@ -1,0 +1,411 @@
+<!DOCTYPE HTML>
+<html lang="en" class="rust sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Following the storm: the adaptive grid - WeatherEngine - Game-ready weather simulations</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="A guide to WeatherEngine that teaches enough meteorology to author and drive live weather in a game, starting from zero.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "rust";
+            const default_dark_theme = "ayu";
+            window.path_to_searchindex_js = "../searchindex-1f9e71ea.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-a12e3f79.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('rust')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">WeatherEngine - Game-ready weather simulations</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="following-the-storm-the-adaptive-grid"><a class="header" href="#following-the-storm-the-adaptive-grid">Following the storm: the adaptive grid</a></h1>
+<p>A storm is tiny compared to the sky around it. Simulating your whole domain
+at storm-resolving 200 m cells would waste almost all of that work on empty,
+calm air. The <strong>regridder</strong> is the engine’s answer: it keeps fine cells
+<em>only where the storm is</em> and lets everywhere else stay coarse - and it moves
+that fine patch as the storm grows and drifts. This is what “adaptive
+resolution” means, and it is the feature that makes large, detailed weather
+affordable in a game.</p>
+<p>You only need this if your <code>GridConfig</code> has <code>levels &gt; 1</code>. With <code>levels = 1</code>
+the grid is uniform and there is nothing to adapt.</p>
+<h2 id="the-idea-refine-where-it-matters-coarsen-where-it-does-not"><a class="header" href="#the-idea-refine-where-it-matters-coarsen-where-it-does-not">The idea: refine where it matters, coarsen where it does not</a></h2>
+<p>Recall from <a href="./grid.html">Building a world</a> that with <code>levels &gt; 1</code> the grid can
+sit at a coarse cell size and <strong>refine</strong> toward <code>dx_finest</code> in patches. The
+regridder decides, every so often, which patches deserve refinement:</p>
+<ul>
+<li>Where the air is doing something interesting (a strong updraft, warm buoyant
+air, dense cloud, rotation), it <strong>splits</strong> coarse bricks into finer ones.</li>
+<li>Where things have gone quiet, it <strong>merges</strong> fine bricks back into coarse
+ones to reclaim the cost.</li>
+</ul>
+<p>The result is a grid that hugs the storm - fine over the updraft, coarse over
+the calm - and follows it around the domain. You run it periodically during
+<code>advance</code>, and it reports what it did.</p>
+<h2 id="running-it-advances-second-argument"><a class="header" href="#running-it-advances-second-argument">Running it: <code>advance</code>’s second argument</a></h2>
+<p>The regridder runs <em>inside</em> <code>advance</code>, on a cadence you set:</p>
+<pre><code class="language-cpp">// Advance 5 steps, and run the regridder every 5 steps (so once here).
+client-&gt;advance(/*steps=*/5, /*regrid_every=*/5);
+</code></pre>
+<ul>
+<li><code>regrid_every = 0</code> <strong>disables</strong> regridding for that call (pure dynamics).</li>
+<li><code>regrid_every = N</code> runs the regridder every N base steps during the
+advance. Each run emits a <strong><code>Regridded</code></strong> event; the whole advance ends
+with one <strong><code>Advanced</code></strong> event.</li>
+</ul>
+<p>Regridding is not free, so you do not do it every single step. Every few
+steps is plenty - the storm does not teleport between ticks.</p>
+<p>Before it can run, you must install a configuration with <code>set_regridder</code>.</p>
+<h2 id="configuring-it-new_regridder-and-tiers"><a class="header" href="#configuring-it-new_regridder-and-tiers">Configuring it: <code>new_regridder</code> and tiers</a></h2>
+<p>A regridder is a <strong>ladder of tiers</strong>. Each tier grants one more level of
+refinement, and says <em>what signal</em> justifies refining to that level. You
+build it, add tiers finest-last, and hand it over:</p>
+<pre><code class="language-cpp">Box&lt;Regridder&gt; regridder = new_regridder(/*hold_rounds=*/3, /*min_age_rounds=*/3);
+
+TierTrigger storm_birth{};        // tier 0 -&gt; grants level 1
+storm_birth.theta_above      = 0.8f;      // refine where |theta'| &gt;= 0.8 K
+storm_birth.w_above          = 1.5f;      // ...or |w| &gt;= 1.5 m/s
+storm_birth.condensate_above = 1.0e-4f;   // ...or cloud+rain &gt;= 1e-4 kg/kg
+storm_birth.zeta_above       = 1.0e30f;   // vorticity: effectively disabled
+storm_birth.pad_bricks       = 1;         // refine 1 brick beyond the signal
+storm_birth.max_bricks       = 320;       // cap this tier's fine bricks
+regridder-&gt;add_tier(storm_birth);
+
+TierTrigger storm_core{};         // tier 1 -&gt; grants level 2 (finest)
+storm_core.theta_above      = 1.0e30f;    // disabled
+storm_core.w_above          = 5.0f;       // only strong updrafts
+storm_core.condensate_above = 3.0e-3f;    // ...or heavy condensate
+storm_core.zeta_above       = 5.0e-3f;    // ...or real rotation
+storm_core.pad_bricks       = 1;
+storm_core.max_bricks       = 256;
+regridder-&gt;add_tier(storm_core);
+
+client-&gt;set_regridder(std::move(regridder));
+pump_until(*client, SimEventKind::Status);   // install ack
+</code></pre>
+<h3 id="the-tier-ladder"><a class="header" href="#the-tier-ladder">The tier ladder</a></h3>
+<ul>
+<li>The <strong>first tier you add grants level 1</strong>, the second grants level 2, and
+so on. So add them from <strong>coarsest trigger to finest</strong>. Level 0 (the base
+coarse grid) is always present and never capped.</li>
+<li>A tier fires wherever <strong>any</strong> of its enabled signals crosses its threshold.
+A cell that meets a finer tier’s trigger gets refined all the way to that
+tier’s level.</li>
+<li>The pattern above is the common one: a <strong>loose</strong> first tier catches the
+whole storm and its surroundings at medium resolution; a <strong>strict</strong> second
+tier drops the very finest cells only on the violent core (strong updraft,
+heavy condensate, real rotation).</li>
+</ul>
+<h3 id="tiertrigger-signals"><a class="header" href="#tiertrigger-signals"><code>TierTrigger</code> signals</a></h3>
+<p>Each is a threshold; set a signal to a huge value (like <code>1e30f</code>) to <strong>disable
+it</strong>. All map to concepts from Part I:</p>
+<ul>
+<li><strong><code>theta_above</code></strong> (K) - fire where the potential-temperature perturbation
+<code>|theta'|</code> is at least this. Marks warm buoyant air. See
+<a href="../meteo/temperature.html">Heat</a>.</li>
+<li><strong><code>w_above</code></strong> (m/s) - fire where the updraft/downdraft <code>|w|</code> is at least
+this. Marks active convection. This is the workhorse trigger.</li>
+<li><strong><code>condensate_above</code></strong> (kg/kg) - fire where cloud+rain water is at least
+this. Marks the visible storm body. See <a href="../meteo/moisture.html">Water</a>.</li>
+<li><strong><code>zeta_above</code></strong> (1/s) - fire where <strong>vorticity</strong> (local spin) is at least
+this. Vorticity is how fast the air is rotating; a threshold here refines
+the rotating core of a supercell - the mesocyclone from
+<a href="../meteo/shear.html">shear</a>. Values around <code>5e-3</code> 1/s mark real rotation.</li>
+</ul>
+<h3 id="pad_bricks-and-max_bricks"><a class="header" href="#pad_bricks-and-max_bricks"><code>pad_bricks</code> and <code>max_bricks</code></a></h3>
+<ul>
+<li><strong><code>pad_bricks</code></strong> - refine this many bricks <em>beyond</em> where the signal
+actually is, as a margin. Because the storm moves between regrids, a pad of
+1-2 bricks keeps it from outrunning its fine grid before the next run. Too
+small and the storm’s leading edge crosses onto coarse cells; too big and
+you waste fine cells on empty air.</li>
+<li><strong><code>max_bricks</code></strong> - a hard cap on how many fine bricks this tier may use
+(<code>0</code> = uncapped). This is your <strong>cost ceiling</strong>: it bounds the worst-case
+work per step even if the storm grows huge. If the demand exceeds the cap,
+the regridder demotes the least-important regions to stay under budget.</li>
+</ul>
+<h2 id="hysteresis-hold_rounds-and-min_age_rounds"><a class="header" href="#hysteresis-hold_rounds-and-min_age_rounds">Hysteresis: <code>hold_rounds</code> and <code>min_age_rounds</code></a></h2>
+<p>If the grid refined and coarsened the instant a signal wobbled across a
+threshold, it would “flicker” - constantly splitting and merging the same
+bricks, which is wasteful and can jitter the solution. <code>new_regridder</code> takes
+two hysteresis counts (in regrid rounds) to damp this:</p>
+<ul>
+<li><strong><code>hold_rounds</code></strong> - after a brick’s signal drops below threshold, it must
+stay quiet this many rounds before it is allowed to coarsen. Prevents a
+briefly-calm patch from de-refining and then immediately needing to
+refine again.</li>
+<li><strong><code>min_age_rounds</code></strong> - a freshly refined brick must live at least this many
+rounds before it may coarsen. Prevents split-then-immediately-merge churn.</li>
+</ul>
+<p><code>3</code> and <code>3</code> (as in the example) are sensible starting values. Raise them if
+you see the grid thrashing; lower them if the grid is too slow to release
+resolution behind a fast-moving storm.</p>
+<h2 id="reading-regridded-did-it-keep-up"><a class="header" href="#reading-regridded-did-it-keep-up">Reading <code>Regridded</code>: did it keep up?</a></h2>
+<p>Each regrid emits a <code>Regridded</code> event with a <code>RegridSummary</code>. The field to
+watch is <strong><code>min_margin</code></strong>:</p>
+<pre><code class="language-cpp">case SimEventKind::Regridded: {
+    RegridSummary r = event-&gt;regrid_summary();
+    if (r.min_margin == 0) {
+        std::printf("warning: storm reached the edge of its fine grid!\n");
+    }
+    break;
+}
+</code></pre>
+<ul>
+<li><strong><code>min_margin</code></strong> - the distance (in finest bricks) from the nearest signal
+to the boundary of its fine region. It is your early-warning gauge:
+<ul>
+<li><strong><code>-1</code></strong> - nothing triggered at all (no storm, or thresholds too high).</li>
+<li><strong>large positive</strong> - comfortable; the fine grid surrounds the storm with
+room to spare.</li>
+<li><strong>small positive</strong> - the storm is nearing the edge of its fine patch.</li>
+<li><strong><code>0</code></strong> - <strong>failure</strong>: the storm has reached (and is spilling past) its
+fine grid. Its leading edge is now on coarse cells and detail is being
+lost. Fix by increasing <code>pad_bricks</code>, regridding more often (smaller
+<code>regrid_every</code>), or - if it keeps happening because the storm is fast -
+<a href="../meteo/shear.html">parking the storm</a>.</li>
+</ul>
+</li>
+</ul>
+<p>The summary also reports <strong><code>splits</code></strong> (leaves refined), <strong><code>merges</code></strong> (leaves
+coarsened), and <strong><code>demoted_regions</code></strong> (patches the <code>max_bricks</code> budget forced
+back to coarse). Rising <code>demoted_regions</code> means you are hitting your cost cap</p>
+<ul>
+<li>raise <code>max_bricks</code> if you can afford it, or accept the coarser edges.</li>
+</ul>
+<h2 id="when-you-do-not-need-a-regridder"><a class="header" href="#when-you-do-not-need-a-regridder">When you do not need a regridder</a></h2>
+<ul>
+<li><strong>Uniform grid</strong> (<code>levels = 1</code>): there is nothing to adapt; do not set one.</li>
+<li><strong>Small fixed domains</strong> where you can afford fine cells everywhere: simpler
+to run uniform.</li>
+<li><strong>Prototyping</strong>: get the storm right first with <code>regrid_every = 0</code>, then
+add adaptation for performance.</li>
+</ul>
+<h2 id="takeaways"><a class="header" href="#takeaways">Takeaways</a></h2>
+<ul>
+<li>The <strong>regridder</strong> keeps fine cells on the storm and coarse cells
+elsewhere, and follows the storm - the core of affordable large-domain
+weather. Only relevant when <code>levels &gt; 1</code>.</li>
+<li>Configure a <strong>ladder of tiers</strong> with <code>new_regridder</code> + <code>add_tier</code>
+(finest-last). Each tier grants one level and fires on any enabled signal:
+<code>theta_above</code>, <code>w_above</code>, <code>condensate_above</code>, <code>zeta_above</code>.</li>
+<li><strong><code>pad_bricks</code></strong> gives the moving storm margin; <strong><code>max_bricks</code></strong> caps cost.</li>
+<li><strong>Hysteresis</strong> (<code>hold_rounds</code>, <code>min_age_rounds</code>) stops the grid from
+flickering; <code>3</code>/<code>3</code> is a good start.</li>
+<li>Run it via <code>advance(steps, regrid_every)</code>; watch <strong><code>min_margin</code></strong> in the
+<code>Regridded</code> event - <strong><code>0</code> means the storm outran its fine grid.</strong></li>
+</ul>
+<p>Next: pulling the simulated weather out to render and inspect it.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../engine/scenarios.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../engine/output.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../engine/scenarios.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../engine/output.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>
